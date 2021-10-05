@@ -1,8 +1,9 @@
 import { useState } from "react";
 import ChessMapGenerator from "./service/BoardGenerator";
-import { CheckersSection, Div } from "./CheckersSection";
+import { CheckersSection, Div } from "./css/CheckersSection.Style";
 import { GRID_SIZE } from "./constants/index";
 import { TargetType, wallCreator, dataFinder } from "./constants/helper";
+import { updatePosition } from "./hooks/index";
 
 const App = () => {
   const [currentPlayer, setCurrentPlayer] = useState("white");
@@ -28,17 +29,17 @@ const App = () => {
     const wall2 = wallCreator(boardData, (item) => item.id % 8 === wall2Pos);
     const illegalPosition = [...wall1, ...wall2];
 
+    const takeBlock = dataFinder(boardData, (finder) => finder._id === dropId);
     const takePawn = dataFinder(
       boardData,
       (finder) => finder._id === grabbedAsNumber
     );
 
-    const takeBlock = dataFinder(boardData, (finder) => finder._id === dropId);
-
+    const FindTargetType = TargetType(takeBlock.type, 0);
     let type = TargetType(takePawn.type, 0);
-    const pawnID = takePawn.id;
-
     if (!type) type = TargetType(takePawn.type, 0);
+
+    const pawnID = takePawn.id;
 
     const moveIndex =
       type === "white"
@@ -46,11 +47,21 @@ const App = () => {
         : [pawnID + GRID_SIZE - 1, pawnID + GRID_SIZE + 1];
 
     const clearMove = moveIndex.filter((el) => !illegalPosition.includes(el));
+
     const move = illegalPosition.includes(pawnID) ? clearMove : moveIndex;
 
-    console.log(move);
+    const checkPlayer = currentPlayer === type;
+    const DifferentColor = type !== FindTargetType;
 
-    setCurrentPlayer(currentPlayer === "white" ? "black" : "white");
+    const MOVE = checkPlayer && DifferentColor;
+
+    if (!MOVE) return;
+
+    if (takeBlock && takeBlock.type === "" && move.includes(dropId)) {
+      const Update = updatePosition(boardData, dropId, takePawn);
+      setBoard(Update);
+      setCurrentPlayer(currentPlayer === "white" ? "black" : "white");
+    }
   };
 
   return (
