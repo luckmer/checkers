@@ -1,6 +1,10 @@
-const updatePosition = (array, dropId, takePawn) => {
-  return array.map((el) => {
-    if (Number(el.id) === Number(dropId)) {
+const updatePosition = ({ boardData, dropId, takePawn, killedPawn }) => {
+  const killedPawnId = killedPawn?.killed;
+
+  return boardData.map((el) => {
+    const id = Number(el.id);
+
+    if (id === Number(dropId)) {
       return {
         ...el,
         Img: takePawn.Img,
@@ -8,7 +12,15 @@ const updatePosition = (array, dropId, takePawn) => {
       };
     }
 
-    if (Number(el.id) === Number(takePawn.id)) {
+    if (id === killedPawnId) {
+      return {
+        ...el,
+        Img: "Empty",
+        type: "",
+      };
+    }
+
+    if (id === Number(takePawn.id)) {
       const Type = el.type.split(" ")[1].toString();
       if (Type === "white" || Type === "black") {
         return {
@@ -18,7 +30,7 @@ const updatePosition = (array, dropId, takePawn) => {
         };
       }
     }
-    if (Number(el.id) === Number(takePawn.id)) {
+    if (id === Number(takePawn.id)) {
       return {
         ...el,
         Img: "Empty",
