@@ -25,9 +25,7 @@ const App = () => {
     const wall1Pos = 1;
     const wall2Pos = 0;
 
-    const wall1 = wallCreator(boardData, (item) => item.id % 8 === wall1Pos);
-    const wall2 = wallCreator(boardData, (item) => item.id % 8 === wall2Pos);
-    const illegalPosition = [...wall1, ...wall2];
+    const illegalPosition = WallPanelControl(boardData, wall1Pos, wall2Pos);
 
     const takeBlock = dataFinder(boardData, (finder) => finder._id === dropId);
     const takePawn = dataFinder(
@@ -53,12 +51,36 @@ const App = () => {
     const checkPlayer = currentPlayer === type;
     const DifferentColor = type !== FindTargetType;
 
+    const attackPosition = boardData
+      .filter((el) => move.includes(el._id))
+      .map((el) => {
+        const ID = el.id;
+        const calcWhite = ~~(pawnID - ID);
+        const calcBlack = ~~(ID - pawnID + ID);
+        let test = TargetType(el.type, 0);
+        const controlType = type === "white" ? ID - calcWhite : calcBlack;
+
+        if (el.Img !== "Empty" && type !== test && dropId === controlType) {
+          const result = { id: controlType, killed: ID, killedImg: el.Img };
+
+          return result;
+        }
+
+        return { id: ID };
+      });
+
+    const attack = attackPosition.map((el) => el.id);
+    const killedPawn = attackPosition.find((el) => el?.killed);
+
+    console.log(attackPosition);
+
     const MOVE = checkPlayer && DifferentColor;
 
     if (!MOVE) return;
 
-    if (takeBlock && takeBlock.type === "" && move.includes(dropId)) {
-      const Update = updatePosition(boardData, dropId, takePawn);
+    if (takeBlock && takeBlock.type === "" && attack.includes(dropId)) {
+      const props = { boardData, dropId, takePawn, killedPawn };
+      const Update = updatePosition(props);
       setBoard(Update);
       setCurrentPlayer(currentPlayer === "white" ? "black" : "white");
     }
@@ -87,3 +109,12 @@ const App = () => {
 };
 
 export default App;
+const WallPanelControl = (boardData, wall1Pos, wall2Pos) => {
+  const wall1 = wallCreator(boardData, (item) => item.id % 8 === wall1Pos);
+
+  const wall2 = wallCreator(boardData, (item) => item.id % 8 === wall2Pos);
+
+  const illegalPosition = [...wall1, ...wall2];
+
+  return illegalPosition;
+};
