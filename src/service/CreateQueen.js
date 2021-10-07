@@ -1,5 +1,5 @@
-import BlackQueen from "../../image/BlackQueen.png";
-import WhiteQueen from "../../image/whiteQueen.png";
+import BlackQueen from "../image/BlackQueen.png";
+import WhiteQueen from "../image/whiteQueen.png";
 
 const CreateQueen = (props) => {
   const { boardData, dropId, takePawn, type } = props;
