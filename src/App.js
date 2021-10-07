@@ -1,9 +1,11 @@
 import { useState } from "react";
-import ChessMapGenerator from "./service/BoardGenerator";
+
 import { CheckersSection, Div } from "./css/CheckersSection.Style";
-import { GRID_SIZE } from "./constants/index";
-import { TargetType, wallCreator, dataFinder } from "./constants/helper";
-import { updatePosition } from "./hooks/index";
+import { finderDataType, targetDataType } from "./hooks/helper/index";
+
+import ChessMapGenerator from "./service/BoardGenerator";
+import Queen from "./hooks/Queen/Queen";
+import Pawn from "./hooks/pawn/Pawn";
 
 const App = () => {
   const [currentPlayer, setCurrentPlayer] = useState("white");
@@ -18,71 +20,27 @@ const App = () => {
 
   const handleDrop = (e) => {
     e.preventDefault();
-    const id = e.dataTransfer.getData("id");
-    const grabbedAsNumber = Number(id);
-    const dropId = Number(e.target.id);
 
-    const wall1Pos = 1;
-    const wall2Pos = 0;
-
-    const illegalPosition = WallPanelControl(boardData, wall1Pos, wall2Pos);
-
-    const takeBlock = dataFinder(boardData, (finder) => finder._id === dropId);
-    const takePawn = dataFinder(
-      boardData,
-      (finder) => finder._id === grabbedAsNumber
-    );
-
-    const FindTargetType = TargetType(takeBlock.type, 0);
-    let type = TargetType(takePawn.type, 0);
-    if (!type) type = TargetType(takePawn.type, 0);
-
-    const pawnID = takePawn.id;
-
-    const moveIndex =
-      type === "white"
-        ? [pawnID - GRID_SIZE - 1, pawnID - GRID_SIZE + 1]
-        : [pawnID + GRID_SIZE - 1, pawnID + GRID_SIZE + 1];
-
-    const clearMove = moveIndex.filter((el) => !illegalPosition.includes(el));
-
-    const move = illegalPosition.includes(pawnID) ? clearMove : moveIndex;
-
-    const checkPlayer = currentPlayer === type;
-    const DifferentColor = type !== FindTargetType;
-
-    const attackPosition = boardData
-      .filter((el) => move.includes(el._id))
-      .map((el) => {
-        const ID = el.id;
-        const calcWhite = ~~(pawnID - ID);
-        const calcBlack = ~~(ID - pawnID + ID);
-        let test = TargetType(el.type, 0);
-        const controlType = type === "white" ? ID - calcWhite : calcBlack;
-
-        if (el.Img !== "Empty" && type !== test && dropId === controlType) {
-          const result = { id: controlType, killed: ID, killedImg: el.Img };
-
-          return result;
-        }
-
-        return { id: ID };
-      });
-
-    const attack = attackPosition.map((el) => el.id);
-    const killedPawn = attackPosition.find((el) => el?.killed);
-
-    console.log(attackPosition);
-
-    const MOVE = checkPlayer && DifferentColor;
+    const props = { e, boardData, currentPlayer, setBoard, setCurrentPlayer };
+    const { PROPS, MOVE, type } = DropHelper({ ...props });
 
     if (!MOVE) return;
 
-    if (takeBlock && takeBlock.type === "" && attack.includes(dropId)) {
-      const props = { boardData, dropId, takePawn, killedPawn };
-      const Update = updatePosition(props);
-      setBoard(Update);
-      setCurrentPlayer(currentPlayer === "white" ? "black" : "white");
+    switch (type) {
+      case "white":
+        Pawn({ ...PROPS });
+        break;
+      case "black":
+        Pawn({ ...PROPS });
+        break;
+      case "whiteQueen":
+        Queen({ ...PROPS });
+        break;
+      case "blackQueen":
+        Queen({ ...PROPS });
+        break;
+      default:
+        break;
     }
   };
 
@@ -94,6 +52,7 @@ const App = () => {
         return (
           <Div
             key={i}
+            type={el.type}
             id={el.id}
             onDragOver={(e) => handleDragOver(e)}
             onDragStart={(e) => (check ? null : handleDragStart(e))}
@@ -109,12 +68,45 @@ const App = () => {
 };
 
 export default App;
-const WallPanelControl = (boardData, wall1Pos, wall2Pos) => {
-  const wall1 = wallCreator(boardData, (item) => item.id % 8 === wall1Pos);
 
-  const wall2 = wallCreator(boardData, (item) => item.id % 8 === wall2Pos);
+const DropHelper = (props) => {
+  const { e, boardData, currentPlayer, setBoard, setCurrentPlayer } = props;
 
-  const illegalPosition = [...wall1, ...wall2];
+  const id = e.dataTransfer.getData("id");
+  const grabbedAsNumber = Number(id);
+  const dropId = Number(e.target.id);
 
-  return illegalPosition;
+  const { takeBlock, takePawn } = finderDataType(
+    boardData,
+    dropId,
+    grabbedAsNumber
+  );
+
+  const { type, FindTargetType } = targetDataType(takeBlock, takePawn);
+
+  const pawnID = takePawn.id;
+
+  const arrCenter = type.length / 2;
+
+  const moveType = type.includes("Queen") ? type.slice(0, arrCenter) : type;
+
+  const checkPlayer = currentPlayer === moveType;
+
+  const DifferentColor = moveType !== FindTargetType;
+
+  const MOVE = checkPlayer && DifferentColor;
+
+  const PROPS = {
+    boardData,
+    type,
+    pawnID,
+    dropId,
+    takeBlock,
+    takePawn,
+    setBoard,
+    setCurrentPlayer,
+    currentPlayer,
+  };
+
+  return { PROPS, MOVE, type };
 };

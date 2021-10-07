@@ -1,1 +1,1 @@
-export { default as updatePosition } from "./UpdateArray.hook";
+export { default as updatePosition } from "./ArrayHelpers/UpdateArray.hook";

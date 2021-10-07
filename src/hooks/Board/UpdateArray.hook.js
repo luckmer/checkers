@@ -1,4 +1,6 @@
-const updatePosition = ({ boardData, dropId, takePawn, killedPawn }) => {
+const updatePosition = (props) => {
+  const { boardData, dropId, takePawn, killedPawn } = props;
+
   const killedPawnId = killedPawn?.killed;
 
   return boardData.map((el) => {
