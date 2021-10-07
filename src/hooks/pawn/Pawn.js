@@ -1,5 +1,5 @@
 import PawnHelper from "./PawnHelper";
-import { CreateQueen, updatePosition } from "../Board";
+import { CreateQueen, updatePosition } from "../../service";
 import { getArrayEdges } from "../../constants/helper";
 
 const Pawn = ({
