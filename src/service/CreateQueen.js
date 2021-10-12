@@ -2,7 +2,9 @@ import BlackQueen from "../image/BlackQueen.png";
 import WhiteQueen from "../image/whiteQueen.png";
 
 const CreateQueen = (props) => {
-  const { boardData, dropId, takePawn, type } = props;
+  const { boardData, dropId, takePawn, killedPawn, type } = props;
+
+  const killedPawnId = killedPawn?.killed;
 
   return boardData.map((el) => {
     const id = Number(el._id);
@@ -14,6 +16,14 @@ const CreateQueen = (props) => {
         ...el,
         type: `${color}Queen, ${takePawn.type}`,
         Img: type === "white" ? WhiteQueen : BlackQueen,
+      };
+    }
+
+    if (id === killedPawnId) {
+      return {
+        ...el,
+        Img: "Empty",
+        type: "",
       };
     }
 
