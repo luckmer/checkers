@@ -1,4 +1,4 @@
-import { finderDataType, targetDataType } from "../hooks/helper";
+import { finderDataType, targetDataType } from "../../hooks/helper";
 
 const DropHelper = (props) => {
   const { e, boardData, currentPlayer, setBoard, setCurrentPlayer } = props;

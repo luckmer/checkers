@@ -1,6 +1,6 @@
-import QueenHelper from "./QueenHelper";
+import QueenHelper from "../hooks/Queen/QueenHelper";
 import moveQueen from "./MoveQueen";
-import { updatePosition } from "../../service";
+import { updatePosition } from "../service";
 
 const Queen = ({
   boardData,
