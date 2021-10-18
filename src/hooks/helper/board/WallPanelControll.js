@@ -1,4 +1,4 @@
-import { wallCreator } from "../../constants/helper";
+import { wallCreator } from "../../../constants/helper";
 
 const WallPanelControl = (boardData) => {
   const wall1Pos = 1;

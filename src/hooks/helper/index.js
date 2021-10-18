@@ -1,1 +1,1 @@
-export { default as WallPanelControl } from "./WallPanelControll";
+export { default as WallPanelControl } from "./board/WallPanelControll";

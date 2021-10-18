@@ -7,8 +7,13 @@ import { moveIndex } from "./hooks/pawn/MovePawn";
 import { wallCreator } from "./constants/helper";
 import { WallPanelControl } from "./hooks/helper";
 import { direction } from "./constants";
-import blackPawn from "./hooks/pawn/blackPawn";
-import whitePawn from "./hooks/pawn/whitePawn";
+import { Axis, YAxis } from "./hooks/helper/axis";
+
+import switchPlayer from "./hooks/helper/player/switchPlayer";
+import BoardUpdate from "./hooks/helper/board/boardUpdate";
+import BlockFinder from "./hooks/helper/board/blockFinder";
+import dataSetter from "./hooks/helper/data/setter";
+import dataGetter from "./hooks/helper/data/getter";
 
 const App = () => {
   const [currentPlayer, setCurrentPlayer] = useState("white");
@@ -43,7 +48,7 @@ const App = () => {
     const leftWall = wallCreator(boardData, (item) => item.id % 8 === 1);
     const rightWall = wallCreator(boardData, (item) => item.id % 8 === 0);
 
-    const { detectAttack, correctLeftMove, oneAxis } = ControlLeftSite(
+    const props = {
       boardData,
       takePawn,
       direction,
@@ -52,33 +57,16 @@ const App = () => {
       currentPlayer,
       id,
       move,
-      pawnType
-    );
+      pawnType,
+    };
 
-    const { test, CorrectRightMove, oneYAxis } = ControlRightSite(
-      boardData,
-      takePawn,
-      rightWall,
-      leftWall,
-      currentPlayer,
-      id,
-      move,
-      pawnType
-    );
+    const { detectAttack, correctLeftMove, oneAxis } = ControlLeftSite({
+      ...props,
+    });
+
+    const { test, CorrectRightMove, oneYAxis } = ControlRightSite({ ...props });
 
     const sameMove = constants.checkArrays(test.data, detectAttack.data);
-    const playerType = constants.TargetType(takePawn.type, 0);
-
-    switch (currentPlayer) {
-      case currentPlayer === "white" && playerType === currentPlayer:
-        whitePawn();
-        break;
-      case currentPlayer === "black" && playerType === currentPlayer:
-        blackPawn();
-        break;
-      default:
-        break;
-    }
 
     const detectValues = sameMove
       ? detectAttack
@@ -146,39 +134,9 @@ const App = () => {
   );
 };
 
-const switchPlayer = (props) => {
-  const {
-    CorrectRightMove,
-    correctLeftMove,
-    currentPlayer,
-    boardData,
-    pawnType,
-    drop,
-  } = props;
-
-  const dropPosition = moveIndex(pawnType, drop);
-
-  const { rightWall, leftWall, IncreaseDrop } = dropPanel(
-    boardData,
-    dropPosition,
-    currentPlayer
-  );
-
-  if (rightWall.includes(drop) || leftWall.includes(drop)) return false;
-
-  if (CorrectRightMove || correctLeftMove) {
-    const findDropObj = boardData
-      .filter((el) => IncreaseDrop.includes(el.id))
-      .map(({ type }) => type);
-
-    return findDropObj.includes("") ? true : false;
-  }
-  return false;
-};
-
 export default App;
 
-const ControlLeftSite = (
+const ControlLeftSite = ({
   boardData,
   takePawn,
   direction,
@@ -187,38 +145,16 @@ const ControlLeftSite = (
   currentPlayer,
   id,
   move,
-  pawnType
-) => {
-  //
-  const XCheckTopWhite = boardData.filter(
-    (item) =>
-      parseFloat(item.id) % 9 === (takePawn._id % 9) - direction - 1 &&
-      parseFloat(item.id) <= takePawn._id
+  pawnType,
+}) => {
+  const oneAxis = Axis(
+    boardData,
+    takePawn,
+    direction,
+    leftWall,
+    rightWall,
+    currentPlayer
   );
-
-  const XTopWallCollision = XCheckTopWhite.filter((el) =>
-    leftWall.includes(el.id)
-  ).map(({ id }) => id)[0];
-
-  const XTopWall = XCheckTopWhite.filter((el) =>
-    !XTopWallCollision ? el : el.id >= XTopWallCollision
-  );
-
-  const XCheckTopBlack = boardData.filter(
-    (item) =>
-      parseFloat(item.id) % 9 === (takePawn._id % 9) - direction - 1 &&
-      parseFloat(item.id) >= takePawn._id
-  );
-
-  const XBlackWallCollision = XCheckTopBlack.filter((el) =>
-    rightWall.includes(el.id)
-  ).map(({ id }) => id)[0];
-
-  const XBlackWall = XCheckTopBlack.filter((el) =>
-    !XBlackWallCollision ? el : el.id <= XBlackWallCollision
-  );
-
-  const oneAxis = currentPlayer === "white" ? XTopWall : XBlackWall;
 
   const data = BlockFinder(oneAxis, currentPlayer, boardData, 9);
 
@@ -321,103 +257,7 @@ const ControlLeftSite = (
   return { detectAttack, correctLeftMove, oneAxis };
 };
 
-const BlockFinder = (oneAxis, currentPlayer, boardData, direction) => {
-  const blackBlocks = oneAxis
-    .filter((el) => {
-      const Player = el.type.split(" ")[0].replace(/[,]/g, "");
-
-      return Player !== currentPlayer;
-    })
-    .filter((el) => el.type)
-    .map(({ id }) => id);
-
-  const higher = blackBlocks.map((el) => [el - direction, el, el + direction]);
-  const smaller = blackBlocks.map((el) => [el + direction, el, el - direction]);
-
-  const findEmptySpace = [
-    ...new Set(constants.combineArray([...higher, ...smaller])),
-  ];
-
-  const data = boardData.filter((el) => findEmptySpace.includes(el.id));
-
-  return data;
-};
-
-const dropPanel = (boardData, dropPosition, currentPlayer) => {
-  const leftWall = wallCreator(boardData, (item) => item.id % 8 === 1);
-  const rightWall = wallCreator(boardData, (item) => item.id % 8 === 0);
-
-  const IncreaseWhite = dropPosition.map((el, index) => {
-    if (rightWall.includes(el) || leftWall.includes(el)) return undefined;
-
-    const jumpX = 9,
-      jumpY = 7;
-
-    if (index === 0 && currentPlayer === "white") {
-      return el - jumpX;
-    }
-    return el - jumpY;
-  });
-
-  const increaseBlack = dropPosition.map((el, index) => {
-    if (rightWall.includes(el) || leftWall.includes(el)) return undefined;
-    const jumpX = 9,
-      jumpY = 7;
-
-    return index === 1 ? el + jumpX : el + jumpY;
-  });
-
-  const IncreaseDrop =
-    currentPlayer === "white" ? IncreaseWhite : increaseBlack;
-  return { rightWall, leftWall, IncreaseDrop };
-};
-
-const BoardUpdate = (
-  takePawn,
-  drop,
-  oneYAxis,
-  oneAxis,
-  currentPlayer,
-  boardData
-) => {
-  const pawn = takePawn.id;
-  const jump = drop;
-
-  const clearX = constants.values(oneYAxis);
-  const clearY = constants.values(oneAxis);
-
-  const blackX = constants.blackAxis(clearX, pawn, jump);
-  const blackY = constants.blackAxis(clearY, pawn, jump);
-  const whiteX = constants.whiteAxis(clearX, pawn, jump);
-  const whiteY = constants.whiteAxis(clearY, pawn, jump);
-
-  const switchX = currentPlayer === "white" ? whiteX : blackX;
-  const switchY = currentPlayer === "white" ? whiteY : blackY;
-
-  const XJump = clearX.includes(jump) ? switchX : undefined;
-  const YJump = clearY.includes(jump) ? switchY : undefined;
-
-  const update = boardData.map((el) => {
-    const ids = Number(el.id);
-
-    if (ids === Number(drop)) {
-      return { ...el, Img: takePawn.Img, type: takePawn.type };
-    }
-
-    if (
-      (XJump && XJump.includes(ids)) ||
-      (YJump && YJump.includes(ids)) ||
-      ids === Number(takePawn.id)
-    ) {
-      return { ...el, Img: "Empty", type: "" };
-    }
-
-    return el;
-  });
-  return update;
-};
-
-const ControlRightSite = (
+const ControlRightSite = ({
   boardData,
   takePawn,
   rightWall,
@@ -425,48 +265,15 @@ const ControlRightSite = (
   currentPlayer,
   id,
   move,
-  pawnType
-) => {
-  //
-  const YCheckTopWhite = boardData.filter((item) => {
-    const Item = Number(item.id);
-    return (
-      Item % 7 === (takePawn.id % 7) - direction - 1 &&
-      takePawn.id % 8 >= 0 &&
-      Item <= takePawn.id
-    );
-  });
-
-  const YTopWallCollision = constants.wallDetector(YCheckTopWhite, (el) =>
-    rightWall.includes(el.id)
+  pawnType,
+}) => {
+  const { switchCleaner, properties, oneYAxis } = YAxis(
+    boardData,
+    takePawn,
+    rightWall,
+    leftWall,
+    currentPlayer
   );
-
-  const YTopWall = YCheckTopWhite.filter((el) =>
-    !YTopWallCollision ? el : el.id >= YTopWallCollision
-  );
-
-  const YCheckTopBlack = boardData.filter((item) => {
-    const Item = Number(item.id);
-    return (
-      Item % 7 === (takePawn.id % 7) - direction - 1 &&
-      takePawn.id % 8 >= 0 &&
-      Item >= takePawn.id
-    );
-  });
-
-  const YBlackWallCollision = constants.wallDetector(YCheckTopBlack, (el) =>
-    leftWall.includes(el.id)
-  );
-
-  const YBlackWall = YCheckTopBlack.filter((el) =>
-    !YBlackWallCollision ? el : el.id <= YBlackWallCollision
-  );
-
-  const oneYAxis = currentPlayer === "white" ? YTopWall : YBlackWall;
-  const properties = BlockFinder(oneYAxis, currentPlayer, boardData, 7);
-
-  const switchCleaner =
-    currentPlayer === "white" ? YTopWallCollision : YBlackWallCollision;
 
   const data = switchCleaner
     ? properties.filter((el) =>
@@ -520,7 +327,7 @@ const ControlRightSite = (
       }
 
       if (switchOption(optionB.id) === optionA.id) {
-        if (typeA !== typeB && optionA.type === "") {
+        if (typeA !== typeB && optionA.type === "" && typeB !== currentPlayer) {
           return optionA.id;
         }
       }
@@ -532,11 +339,13 @@ const ControlRightSite = (
     JumpMove.length === 1
       ? JumpMove.map((el) => {
           const check = currentPlayer === "white" ? id - el : el - id;
+          console.log(check);
           return check >= 14 ? el : undefined;
         })
       : JumpMove;
 
   const clearBlocker = blocker.filter((el) => el);
+
   const axisXValues = oneYAxis.map(({ id }) => id);
 
   const PossibleAttack = boardData
@@ -555,7 +364,7 @@ const ControlRightSite = (
       : PossibleAttackId + 7;
 
   const checkPossibleBlock =
-    PossibleBefore && !leftWall.includes(PossibleBefore)
+    PossibleBefore && !rightWall.includes(PossibleBefore)
       ? boardData.find((el) => el.id === PossibleBefore)
       : undefined;
 
@@ -572,5 +381,49 @@ const ControlRightSite = (
         data: move,
         jump: false,
       };
+
   return { test, CorrectRightMove, oneYAxis };
+
+  // const { switchCleaner, properties, oneYAxis } = YAxis(
+  //   boardData,
+  //   takePawn,
+  //   rightWall,
+  //   leftWall,
+  //   currentPlayer
+  // );
+
+  // const data = switchCleaner
+  //   ? properties.filter((el) =>
+  //       currentPlayer === "white"
+  //         ? el.id >= switchCleaner
+  //         : el.id <= switchCleaner
+  //     )
+  //   : properties;
+
+  // const onlyEmptyJump = data.filter((el) => el.type === "").map(({ id }) => id);
+
+  // const getNumbers = onlyEmptyJump.filter((el) => el);
+
+  // const jumper = 7;
+
+  // const { clearBlocker } = dataSetter(
+  //   getNumbers,
+  //   currentPlayer,
+  //   boardData,
+  //   jumper,
+  //   id
+  // );
+
+  // const { test, CorrectRightMove } = dataGetter(
+  //   oneYAxis,
+  //   boardData,
+  //   move,
+  //   pawnType,
+  //   currentPlayer,
+  //   leftWall,
+  //   clearBlocker,
+  //   jumper
+  // );
+
+  // return { test, CorrectRightMove, oneYAxis };
 };
