@@ -12,8 +12,8 @@ import { Axis, YAxis } from "./hooks/helper/axis";
 import switchPlayer from "./hooks/helper/player/switchPlayer";
 import BoardUpdate from "./hooks/helper/board/boardUpdate";
 import BlockFinder from "./hooks/helper/board/blockFinder";
-import dataSetter from "./hooks/helper/data/setter";
-import dataGetter from "./hooks/helper/data/getter";
+// import dataSetter from "./hooks/helper/data/setter";
+// import dataGetter from "./hooks/helper/data/getter";
 
 const App = () => {
   const [currentPlayer, setCurrentPlayer] = useState("white");
@@ -32,8 +32,8 @@ const App = () => {
     const id = Number(e.dataTransfer.getData("id"));
     const drop = Number(e.target.id);
 
-    const takePawn = constants.find(boardData, id);
-    const takeDropPawn = constants.find(boardData, drop);
+    const takePawn = constants?.find(boardData, id);
+    const takeDropPawn = constants?.find(boardData, drop);
 
     const pawnType = takePawn.type.split(" ")[0].replace(/[,]/g, "");
 
@@ -89,11 +89,11 @@ const App = () => {
 
     const playerChanger = switchPlayer({ ...PROPS });
 
-    if (
-      takeDropPawn &&
-      takeDropPawn.type === "" &&
-      detectValues?.data.includes(drop)
-    ) {
+    const dropSwitcher = detectValues.data
+      ? detectValues?.data.includes(drop)
+      : detectValues?.includes(drop);
+
+    if (takeDropPawn && takeDropPawn.type === "" && dropSwitcher) {
       const update = BoardUpdate(
         takePawn,
         drop,
@@ -339,7 +339,6 @@ const ControlRightSite = ({
     JumpMove.length === 1
       ? JumpMove.map((el) => {
           const check = currentPlayer === "white" ? id - el : el - id;
-          console.log(check);
           return check >= 14 ? el : undefined;
         })
       : JumpMove;
@@ -364,7 +363,7 @@ const ControlRightSite = ({
       : PossibleAttackId + 7;
 
   const checkPossibleBlock =
-    PossibleBefore && !rightWall.includes(PossibleBefore)
+    PossibleBefore && !leftWall.includes(PossibleBefore)
       ? boardData.find((el) => el.id === PossibleBefore)
       : undefined;
 
