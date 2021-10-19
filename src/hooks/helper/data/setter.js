@@ -1,4 +1,6 @@
-const dataSetter = (getNumbers, currentPlayer, boardData, jumper, id) => {
+const dataSetter = (props) => {
+  const { getNumbers, currentPlayer, boardData, jumper, id } = props;
+
   const increaseJumper = jumper + jumper;
 
   const positionBeforeUpdate = getNumbers.map((el) =>

@@ -32,6 +32,7 @@ const switchPlayer = (props) => {
 
     return findDropObj.includes("") ? true : false;
   }
+
   return false;
 };
 

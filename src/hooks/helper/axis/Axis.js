@@ -1,11 +1,7 @@
-const Axis = (
-  boardData,
-  takePawn,
-  direction,
-  leftWall,
-  rightWall,
-  currentPlayer
-) => {
+const Axis = (props) => {
+  const { boardData, takePawn, direction, leftWall, rightWall, currentPlayer } =
+    props;
+
   const XCheckTopWhite = boardData.filter(
     (item) =>
       parseFloat(item.id) % 9 === (takePawn._id % 9) - direction - 1 &&
