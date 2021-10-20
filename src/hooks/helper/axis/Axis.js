@@ -1,10 +1,12 @@
+import { direction, upJumper } from "../../../constants";
+
 const Axis = (props) => {
-  const { boardData, takePawn, direction, leftWall, rightWall, currentPlayer } =
-    props;
+  const { boardData, takePawn, leftWall, rightWall, currentPlayer } = props;
 
   const XCheckTopWhite = boardData.filter(
     (item) =>
-      parseFloat(item.id) % 9 === (takePawn._id % 9) - direction - 1 &&
+      parseFloat(item.id) % upJumper ===
+        (takePawn._id % upJumper) - direction - 1 &&
       parseFloat(item.id) <= takePawn._id
   );
 
@@ -18,7 +20,8 @@ const Axis = (props) => {
 
   const XCheckTopBlack = boardData.filter(
     (item) =>
-      parseFloat(item.id) % 9 === (takePawn._id % 9) - direction - 1 &&
+      parseFloat(item.id) % upJumper ===
+        (takePawn._id % upJumper) - direction - 1 &&
       parseFloat(item.id) >= takePawn._id
   );
 

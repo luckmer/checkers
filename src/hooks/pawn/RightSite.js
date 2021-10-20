@@ -2,24 +2,11 @@ import IdGetter from "../helper/data/IdGetter";
 import { YAxis } from "../helper/axis";
 import dataSetter from "../helper/data/setter";
 
-const ControlRightSite = ({
-  boardData,
-  takePawn,
-  rightWall,
-  leftWall,
-  currentPlayer,
-  id,
-  move,
-  pawnType,
-  drop,
-}) => {
-  const { switchCleaner, properties, oneYAxis } = YAxis(
-    boardData,
-    takePawn,
-    rightWall,
-    leftWall,
-    currentPlayer
-  );
+const ControlRightSite = (props) => {
+  const PROPS = { ...props };
+  const { currentPlayer, boardData, move, drop, rightWall, leftWall } = PROPS;
+
+  const { switchCleaner, properties, oneYAxis } = YAxis({ ...PROPS });
 
   const data = switchCleaner
     ? properties.filter((el) =>
@@ -35,17 +22,11 @@ const ControlRightSite = ({
 
   const jumper = 7;
 
-  const { clearBlocker } = dataSetter({
-    getNumbers,
-    currentPlayer,
-    boardData,
-    jumper,
-    id,
-  });
+  const { clearBlocker } = dataSetter({ ...PROPS, jumper, getNumbers });
 
   const axisXValues = oneYAxis.map(({ id }) => id);
 
-  const PossibleAttackId = IdGetter(boardData, move, pawnType, axisXValues);
+  const PossibleAttackId = IdGetter({ ...PROPS, axisXValues });
 
   const PossibleBefore =
     PossibleAttackId && currentPlayer === "white"
@@ -67,14 +48,8 @@ const ControlRightSite = ({
     : checkPossibleBlock.type === "";
 
   const test = CorrectRightMove
-    ? {
-        data: clearBlocker,
-        jump: true,
-      }
-    : {
-        data: move,
-        jump: false,
-      };
+    ? { data: clearBlocker, jump: true }
+    : { data: move, jump: false };
 
   return { test, CorrectRightMove, oneYAxis };
 };

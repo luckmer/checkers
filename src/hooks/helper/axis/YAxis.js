@@ -1,14 +1,15 @@
 import BlockFinder from "../board/blockFinder";
 import { wallDetector } from "../../../constants/helper";
+import { direction, downJumper, nextRow } from "../../../constants";
 
-const YAxis = (boardData, takePawn, rightWall, leftWall, currentPlayer) => {
-  const direction = -1;
+const YAxis = (props) => {
+  const { boardData, takePawn, rightWall, leftWall, currentPlayer } = props;
 
   const YCheckTopWhite = boardData.filter((item) => {
     const Item = Number(item.id);
     return (
-      Item % 7 === (takePawn.id % 7) - direction - 1 &&
-      takePawn.id % 8 >= 0 &&
+      Item % downJumper === (takePawn.id % downJumper) - direction - 1 &&
+      takePawn.id % nextRow >= 0 &&
       Item <= takePawn.id
     );
   });
@@ -24,8 +25,8 @@ const YAxis = (boardData, takePawn, rightWall, leftWall, currentPlayer) => {
   const YCheckTopBlack = boardData.filter((item) => {
     const Item = Number(item.id);
     return (
-      Item % 7 === (takePawn.id % 7) - direction - 1 &&
-      takePawn.id % 8 >= 0 &&
+      Item % downJumper === (takePawn.id % downJumper) - direction - 1 &&
+      takePawn.id % nextRow >= 0 &&
       Item >= takePawn.id
     );
   });
@@ -39,7 +40,13 @@ const YAxis = (boardData, takePawn, rightWall, leftWall, currentPlayer) => {
   );
 
   const oneYAxis = currentPlayer === "white" ? YTopWall : YBlackWall;
-  const properties = BlockFinder(oneYAxis, currentPlayer, boardData, 7);
+
+  const properties = BlockFinder(
+    oneYAxis,
+    currentPlayer,
+    boardData,
+    downJumper
+  );
 
   const switchCleaner =
     currentPlayer === "white" ? YTopWallCollision : YBlackWallCollision;

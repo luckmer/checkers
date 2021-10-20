@@ -7,8 +7,8 @@ const dropPanel = (boardData, dropPosition, currentPlayer) => {
   const IncreaseWhite = dropPosition.map((el, index) => {
     if (rightWall.includes(el) || leftWall.includes(el)) return undefined;
 
-    const jumpX = 9,
-      jumpY = 7;
+    const jumpX = 9;
+    const jumpY = 7;
 
     if (index === 0 && currentPlayer === "white") {
       return el - jumpX;

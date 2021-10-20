@@ -5,7 +5,7 @@ import IdGetter from "../helper/data/IdGetter";
 
 const ControlLeftSite = (props) => {
   const PROPS = { ...props };
-  const { currentPlayer, boardData, move, pawnType } = PROPS;
+  const { currentPlayer, boardData, move, leftWall, rightWall, drop } = PROPS;
 
   const oneAxis = Axis({ ...PROPS });
 
@@ -21,12 +21,15 @@ const ControlLeftSite = (props) => {
 
   const axisXValues = oneAxis.map(({ id }) => id);
 
-  const PossibleAttackId = IdGetter(boardData, move, pawnType, axisXValues);
+  const PossibleAttackId = IdGetter({ ...PROPS, axisXValues });
 
   const PossibleBefore =
     PossibleAttackId && currentPlayer === "white"
       ? PossibleAttackId - 9
       : PossibleAttackId + 9;
+
+  const IllegalAttack =
+    leftWall.includes(PossibleAttackId) || rightWall.includes(PossibleAttackId);
 
   const checkPossibleBlock =
     PossibleBefore > 0 || !isNaN(PossibleBefore)
@@ -37,15 +40,10 @@ const ControlLeftSite = (props) => {
     ? false
     : checkPossibleBlock.type === "";
 
-  const detectAttack = correctLeftMove
-    ? {
-        data: clearBlocker,
-        jump: true,
-      }
-    : {
-        data: move,
-        jump: false,
-      };
+  const detectAttack =
+    correctLeftMove && !IllegalAttack
+      ? { data: clearBlocker, jump: true }
+      : { data: move, jump: false };
 
   return { detectAttack, correctLeftMove, oneAxis };
 };

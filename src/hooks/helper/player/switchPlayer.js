@@ -12,6 +12,7 @@ const switchPlayer = (props) => {
   } = props;
 
   const dropPosition = moveIndex(pawnType, drop);
+
   const getter = (arr, element) =>
     arr.filter((el) => element.includes(el.id)).map(({ type }) => type);
 
@@ -19,13 +20,10 @@ const switchPlayer = (props) => {
 
   if (!noMoves.length) return false;
 
-  const { rightWall, leftWall, IncreaseDrop } = dropPanel(
-    boardData,
-    dropPosition,
-    currentPlayer
-  );
+  const { IncreaseDrop } = dropPanel(boardData, dropPosition, currentPlayer);
 
-  if (rightWall.includes(drop) || leftWall.includes(drop)) return false;
+  //fix left and right site
+  // if (rightWall.includes(drop) || leftWall.includes(drop)) return false;
 
   if (CorrectRightMove || correctLeftMove) {
     const findDropObj = getter(boardData, IncreaseDrop);

@@ -1,4 +1,6 @@
-const IdGetter = (boardData, move, pawnType, axisXValues) => {
+const IdGetter = (props) => {
+  const { boardData, move, pawnType, axisXValues } = props;
+
   const PossibleAttack = boardData
     .filter(({ _id }) => move.includes(_id))
     .map((el) => {
