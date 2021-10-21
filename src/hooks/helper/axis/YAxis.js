@@ -1,18 +1,13 @@
 import BlockFinder from "../board/blockFinder";
 import { wallDetector } from "../../../constants/helper";
 import { direction, downJumper, nextRow } from "../../../constants";
+import { yCheckTopBlack, yCheckTopWhite } from "./constants";
 
 const YAxis = (props) => {
   const { boardData, takePawn, rightWall, leftWall, currentPlayer } = props;
+  const PROPS = { boardData, takePawn, downJumper, direction, nextRow };
 
-  const YCheckTopWhite = boardData.filter((item) => {
-    const Item = Number(item.id);
-    return (
-      Item % downJumper === (takePawn.id % downJumper) - direction - 1 &&
-      takePawn.id % nextRow >= 0 &&
-      Item <= takePawn.id
-    );
-  });
+  const YCheckTopWhite = yCheckTopWhite({ ...PROPS });
 
   const YTopWallCollision = wallDetector(YCheckTopWhite, (el) =>
     rightWall.includes(el.id)
@@ -22,7 +17,9 @@ const YAxis = (props) => {
     !YTopWallCollision ? el : el.id >= YTopWallCollision
   );
 
-  const YCheckTopBlack = boardData.filter((item) => {
+  const YCheckTopBlack = yCheckTopBlack({ ...PROPS });
+
+  boardData.filter((item) => {
     const Item = Number(item.id);
     return (
       Item % downJumper === (takePawn.id % downJumper) - direction - 1 &&

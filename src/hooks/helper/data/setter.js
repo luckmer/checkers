@@ -6,6 +6,7 @@ const dataSetter = (props) => {
   const positionBeforeUpdate = getNumbers.map((el) =>
     currentPlayer === "white" ? el + jumper : el - jumper
   );
+
   const positionFutureUpdate = getNumbers.map((el) =>
     currentPlayer === "white" ? el + increaseJumper : el - jumper
   );
@@ -37,11 +38,11 @@ const dataSetter = (props) => {
       const switchOption = (id) =>
         currentPlayer === "white" ? id - jumper : id + jumper;
 
-      if (switchOption(optionC.id) === optionB.id) {
+      if (optionC && switchOption(optionC && optionC.id) === optionB.id) {
         if (typeB === typeC) return undefined;
       }
 
-      if (switchOption(optionB.id) === optionA.id) {
+      if (switchOption(optionB && optionB.id) === optionA.id) {
         if (typeA !== typeB && optionA.type === "") {
           return optionA.id;
         }

@@ -1,11 +1,11 @@
-import { Axis } from "../helper/axis";
-import BlockFinder from "../helper/board/blockFinder";
-import dataSetter from "../helper/data/setter";
-import IdGetter from "../helper/data/IdGetter";
+import { Axis } from "../../helper/axis";
+import BlockFinder from "../../helper/board/blockFinder";
+import dataSetter from "../../helper/data/setter";
+import IdGetter from "../../helper/data/IdGetter";
 
 const ControlLeftSite = (props) => {
   const PROPS = { ...props };
-  const { currentPlayer, boardData, move, leftWall, rightWall, drop } = PROPS;
+  const { currentPlayer, boardData, move, leftWall, rightWall } = PROPS;
 
   const oneAxis = Axis({ ...PROPS });
 

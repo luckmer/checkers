@@ -1,2 +1,2 @@
-export { default as ControlRightSite } from "./RightSite";
-export { default as ControlLeftSite } from "./LeftSite";
+export { default as ControlRightSite } from "./data/RightSite";
+export { default as ControlLeftSite } from "./data/LeftSite";

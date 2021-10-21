@@ -37,6 +37,7 @@ const handleDragData = (boardData, e, currentPlayer) => {
     pawnType,
     drop,
   };
+  if (!props) return;
 
   return { props, move, pawnType, drop, takeDropPawn, takePawn };
 };

@@ -1,33 +1,21 @@
 import { direction, upJumper } from "../../../constants";
+import { xCheckTopWhite, xCheckTopBlack, wallCollision } from "./constants";
 
 const Axis = (props) => {
   const { boardData, takePawn, leftWall, rightWall, currentPlayer } = props;
+  const PROPS = { boardData, direction, upJumper, takePawn };
 
-  const XCheckTopWhite = boardData.filter(
-    (item) =>
-      parseFloat(item.id) % upJumper ===
-        (takePawn._id % upJumper) - direction - 1 &&
-      parseFloat(item.id) <= takePawn._id
-  );
+  const XCheckTopWhite = xCheckTopWhite({ ...PROPS });
 
-  const XTopWallCollision = XCheckTopWhite.filter((el) =>
-    leftWall.includes(el.id)
-  ).map(({ id }) => id)[0];
+  const XTopWallCollision = wallCollision(XCheckTopWhite, leftWall);
 
   const XTopWall = XCheckTopWhite.filter((el) =>
     !XTopWallCollision ? el : el.id >= XTopWallCollision
   );
 
-  const XCheckTopBlack = boardData.filter(
-    (item) =>
-      parseFloat(item.id) % upJumper ===
-        (takePawn._id % upJumper) - direction - 1 &&
-      parseFloat(item.id) >= takePawn._id
-  );
+  const XCheckTopBlack = xCheckTopBlack({ ...PROPS });
 
-  const XBlackWallCollision = XCheckTopBlack.filter((el) =>
-    rightWall.includes(el.id)
-  ).map(({ id }) => id)[0];
+  const XBlackWallCollision = wallCollision(XCheckTopBlack, rightWall);
 
   const XBlackWall = XCheckTopBlack.filter((el) =>
     !XBlackWallCollision ? el : el.id <= XBlackWallCollision

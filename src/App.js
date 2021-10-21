@@ -1,12 +1,17 @@
 import { useState } from "react";
+import ChessMapGenerator from "./service/BoardGenerator";
+
 import { CheckersSection, Div } from "./css/CheckersSection.Style";
-import { ControlLeftSite, ControlRightSite } from "./hooks/pawn/index";
+import * as constants from "./constants/helper";
+import { moveIndex } from "./hooks/pawn/MovePawn";
+import { wallCreator } from "./constants/helper";
+import { WallPanelControl } from "./hooks/helper";
+import { direction } from "./constants";
 
 import switchPlayer from "./hooks/helper/player/switchPlayer";
 import BoardUpdate from "./hooks/helper/board/boardUpdate";
-import handleDragData from "./hooks/helper/drop/dragData";
-import ChessMapGenerator from "./service/BoardGenerator";
-import * as constants from "./constants/helper";
+import { ControlRightSite, ControlLeftSite } from "./hooks/pawn/index";
+import ControlQueen from "./hooks/Queen/ControlQueen";
 
 const App = () => {
   const [currentPlayer, setCurrentPlayer] = useState("white");
@@ -22,15 +27,47 @@ const App = () => {
 
   const handleDrop = (e) => {
     e.preventDefault();
+    const id = Number(e.dataTransfer.getData("id"));
+    const drop = Number(e.target.id);
 
-    const { props, move, pawnType, drop, takeDropPawn, takePawn } =
-      handleDragData(boardData, e, currentPlayer);
+    const takePawn = constants?.find(boardData, id);
+    const takeDropPawn = constants?.find(boardData, drop);
+
+    const queens = ["whiteQueenwhite", "blackQueenblack"];
+    const pawnType = constants.pawnType(takePawn.type);
+    const pawnQueen = constants.queenType(takePawn.type);
+
+    const pawnSwitcher = queens.includes(pawnType) ? pawnQueen : pawnType;
+
+    if (currentPlayer !== pawnSwitcher) return;
+
+    const pawnMoves = moveIndex(pawnType, id);
+    const illegalPosition = WallPanelControl(boardData);
+    const clearMove = pawnMoves.filter((el) => !illegalPosition.includes(el));
+
+    const move = illegalPosition.includes(id) ? clearMove : pawnMoves;
+
+    const leftWall = wallCreator(boardData, (item) => item.id % 8 === 1);
+    const rightWall = wallCreator(boardData, (item) => item.id % 8 === 0);
+
+    const props = {
+      boardData,
+      takePawn,
+      direction,
+      leftWall,
+      rightWall,
+      currentPlayer,
+      id,
+      move,
+      pawnType,
+      drop,
+    };
 
     const { detectAttack, correctLeftMove, oneAxis } = ControlLeftSite({
       ...props,
     });
-
     const { test, CorrectRightMove, oneYAxis } = ControlRightSite({ ...props });
+    const {} = ControlQueen({ ...props });
 
     const sameMove = constants.checkArrays(test.data, detectAttack.data);
 
@@ -71,9 +108,9 @@ const App = () => {
 
       setBoard(update);
 
-      if ((!CorrectRightMove && !correctLeftMove) || !playerChanger) {
-        setCurrentPlayer(currentPlayer === "white" ? "black" : "white");
-      }
+      // if ((!CorrectRightMove && !correctLeftMove) || !playerChanger) {
+      //   setCurrentPlayer(currentPlayer === "white" ? "black" : "white");
+      // }
     }
   };
 

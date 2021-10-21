@@ -1,6 +1,7 @@
-import IdGetter from "../helper/data/IdGetter";
-import { YAxis } from "../helper/axis";
-import dataSetter from "../helper/data/setter";
+import IdGetter from "../../helper/data/IdGetter";
+import dataSetter from "../../helper/data/setter";
+
+import { YAxis } from "../../helper/axis";
 
 const ControlRightSite = (props) => {
   const PROPS = { ...props };

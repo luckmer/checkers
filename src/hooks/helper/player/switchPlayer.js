@@ -22,9 +22,6 @@ const switchPlayer = (props) => {
 
   const { IncreaseDrop } = dropPanel(boardData, dropPosition, currentPlayer);
 
-  //fix left and right site
-  // if (rightWall.includes(drop) || leftWall.includes(drop)) return false;
-
   if (CorrectRightMove || correctLeftMove) {
     const findDropObj = getter(boardData, IncreaseDrop);
 

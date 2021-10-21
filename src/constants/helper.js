@@ -24,6 +24,10 @@ export const wallDetector = (arr, element) => {
   return arr.filter(element).map(({ id }) => id)[0];
 };
 
+export const pawnType = (type) => type.split(" ")[0].replace(/[,]/g, "");
+export const queenType = (type) =>
+  type.split(" ")[0].replace(/[,]/g, " ").split(" ").pop();
+
 export const checkArrays = (arr, tester) => {
   for (let i = 0; i < arr.length; i++) {
     for (let j = 0; j < tester.length; j++) {
