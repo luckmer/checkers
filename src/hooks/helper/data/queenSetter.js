@@ -3,13 +3,9 @@ const dataSetter = (props) => {
 
   const increaseJumper = jumper + jumper;
 
-  const positionBeforeUpdate = getNumbers.map((el) =>
-    currentPlayer === "white" ? el + jumper : el - jumper
-  );
+  const positionBeforeUpdate = getNumbers.map((el) => el + jumper);
 
-  const positionFutureUpdate = getNumbers.map((el) =>
-    currentPlayer === "white" ? el + increaseJumper : el - jumper
-  );
+  const positionFutureUpdate = getNumbers.map((el) => el + increaseJumper);
 
   const positionAfter = boardData.filter((el) => getNumbers.includes(el.id));
 
@@ -32,8 +28,7 @@ const dataSetter = (props) => {
       const typeB = optionB && typeGenerator(optionB.type);
       const typeC = optionC && typeGenerator(optionC.type);
 
-      const switchOption = (id) =>
-        currentPlayer === "white" ? id - jumper : id + jumper;
+      const switchOption = (id) => id - jumper;
 
       if (optionC && switchOption(optionC && optionC.id) === optionB.id) {
         if (typeB === typeC) return undefined;
@@ -51,8 +46,8 @@ const dataSetter = (props) => {
   const blocker =
     JumpMove.length === 1
       ? JumpMove.map((el) => {
-          const check = currentPlayer === "white" ? id - el : el - id;
-          return check >= increaseJumper ? el : undefined;
+          const check = id - el;
+          return check >= jumper ? el : undefined;
         })
       : JumpMove;
 

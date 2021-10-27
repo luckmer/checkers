@@ -55,3 +55,15 @@ export const xAxisBottom = (props) => {
 
   return moveAxisA;
 };
+
+export const xAxisTop = (props) => {
+  const { boardData, direction, upJumper, takePawn } = props;
+  const XTop = boardData.filter(
+    (item) =>
+      parseFloat(item.id) % upJumper ===
+        (takePawn._id % upJumper) - direction - 1 &&
+      parseFloat(item.id) <= takePawn._id
+  );
+
+  return XTop;
+};

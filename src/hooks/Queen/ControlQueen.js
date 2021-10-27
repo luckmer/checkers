@@ -1,9 +1,13 @@
-import { Axis } from "../helper/axis";
+import { WallPanelControl } from "../helper/board/index";
+import {
+  yAxisBottom,
+  yAxisTop,
+  xAxisBottom,
+  xAxisTop,
+} from "./data/queenAxisHelper";
 
 import BlockFinder from "../helper/board/blockFinder";
-import dataSetter from "../helper/data/setter";
-import { WallPanelControl } from "../helper/board/index";
-import { yAxisBottom, yAxisTop, xAxisBottom } from "./data/queenAxisHelper";
+import dataSetter from "../helper/data/queenSetter";
 
 // type: `${color}Queen, ${takePawn.type}`,
 // Img: type === "white" ? WhiteQueen : BlackQueen,
@@ -15,19 +19,27 @@ const ControlQueen = (props) => {
   const YCheckTop = YTopPanel({ ...PROPS }); //?
   const XCheckBottom = XBottomPanel({ ...PROPS }); //?
   const YCheckBottom = YBottomPanel({ ...PROPS }); //?
-  console.log(XCheckTop);
 
-  return {};
+  return { XCheckTop };
 };
 
 export default ControlQueen;
 
+const YTopPanel = (props) => {
+  const moveYAxis = yAxisTop(props);
+
+  console.log(moveYAxis);
+
+  return moveYAxis;
+};
+
 const XTopPanel = (props) => {
   const PROPS = { ...props };
-  const { currentPlayer, boardData, takePawn } = props;
+  const { takePawn, boardData, currentPlayer } = props;
+  const upJumper = 9;
   const jumper = 9;
 
-  const xTopAxis = Axis({ ...PROPS });
+  const xTopAxis = xAxisTop({ ...PROPS, upJumper });
   const moves = xTopAxis.map(({ id }) => id);
   const data = BlockFinder(xTopAxis, currentPlayer, boardData, 9);
   const equalPlayer = data.filter((el) => el.id <= takePawn.id);
@@ -37,7 +49,6 @@ const XTopPanel = (props) => {
     .map(({ id }) => id);
 
   const getNumbers = onlyEmptyJump.filter((el) => el);
-
   const { clearBlocker } = dataSetter({ ...PROPS, jumper, getNumbers });
 
   const id = clearBlocker.shift();
@@ -63,31 +74,42 @@ const XTopPanel = (props) => {
     .filter((el) => el);
 
   const checkMove = detectMove.map((el) => el - 9);
-  const checkPossibleJump = boardData
 
+  const checkPossibleJump = boardData
     .filter((el) => checkMove.includes(el.id))
     .filter((el) => el.type);
 
   const jumpBlocker = checkPossibleJump ? checkPossibleJump.pop() : undefined;
 
   const movesResult = moves.filter((el) => el >= id && el < takePawn.id);
+
   const moveFail = moves.filter((el) => el > ID && el < takePawn.id);
+
   const correctMoves = movesResult.filter((el) =>
     jumpBlocker ? el > jumpBlocker.id : el
   );
 
+  const blocker = boardData
+    .filter((el) => correctMoves.includes(el.id))
+    .map((el) => {
+      const id = el.id;
+      const type = typeGenerator(el.type);
+      return { id, type };
+    });
+
+  const findPlayer = blocker.find((el) => el.type === currentPlayer);
+
+  const correctData =
+    findPlayer !== undefined
+      ? correctMoves.filter((el) => el > findPlayer.id)
+      : correctMoves;
+
   const detectAttack =
-    detectMove.length && movesResult.length > 1
-      ? { data: correctMoves, jump: true }
+    detectMove.length && correctMoves.length > 1
+      ? { data: correctData, jump: true }
       : { data: moveFail, jump: false };
 
   return detectAttack;
-};
-
-const YTopPanel = (props) => {
-  const moveYAxis = yAxisTop(props);
-
-  return moveYAxis;
 };
 
 const YBottomPanel = (props) => {

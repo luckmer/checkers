@@ -14,7 +14,7 @@ import { ControlRightSite, ControlLeftSite } from "./hooks/pawn/index";
 import ControlQueen from "./hooks/Queen/ControlQueen";
 
 const App = () => {
-  const [currentPlayer, setCurrentPlayer] = useState("white");
+  const [currentPlayer, setCurrentPlayer] = useState("black");
 
   const { boardData, setBoard } = ChessMapGenerator();
 
