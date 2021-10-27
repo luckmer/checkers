@@ -7,6 +7,7 @@ import { yAxisBottom, yAxisTop, xAxisBottom } from "./data/queenAxisHelper";
 
 // type: `${color}Queen, ${takePawn.type}`,
 // Img: type === "white" ? WhiteQueen : BlackQueen,
+
 const ControlQueen = (props) => {
   const PROPS = { ...props };
 
@@ -40,6 +41,7 @@ const XTopPanel = (props) => {
   const { clearBlocker } = dataSetter({ ...PROPS, jumper, getNumbers });
 
   const id = clearBlocker.shift();
+
   const ID = xTopAxis
     .filter((el) => el.type && el.type !== takePawn.type)
     .pop().id;
@@ -60,12 +62,23 @@ const XTopPanel = (props) => {
     })
     .filter((el) => el);
 
+  const checkMove = detectMove.map((el) => el - 9);
+  const checkPossibleJump = boardData
+
+    .filter((el) => checkMove.includes(el.id))
+    .filter((el) => el.type);
+
+  const jumpBlocker = checkPossibleJump ? checkPossibleJump.pop() : undefined;
+
   const movesResult = moves.filter((el) => el >= id && el < takePawn.id);
   const moveFail = moves.filter((el) => el > ID && el < takePawn.id);
+  const correctMoves = movesResult.filter((el) =>
+    jumpBlocker ? el > jumpBlocker.id : el
+  );
 
   const detectAttack =
     detectMove.length && movesResult.length > 1
-      ? { data: movesResult, jump: true }
+      ? { data: correctMoves, jump: true }
       : { data: moveFail, jump: false };
 
   return detectAttack;
