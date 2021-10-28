@@ -1,5 +1,5 @@
 const dataSetter = (props) => {
-  const { getNumbers, boardData, jumper, id, currentPlayer } = props;
+  const { getNumbers, boardData, jumper } = props;
 
   const increaseJumper = jumper + jumper;
 
@@ -35,7 +35,7 @@ const dataSetter = (props) => {
       }
 
       if (switchOption(optionB && optionB.id) === optionA.id) {
-        if (typeA !== typeB && optionA.type === "") {
+        if (typeA !== typeB && optionA.type === '') {
           return optionA.id;
         }
       }
@@ -43,25 +43,15 @@ const dataSetter = (props) => {
       return undefined;
     });
 
-  const blocker =
-    JumpMove.length === 1
-      ? JumpMove.map((el) => {
-          const check = id - el;
-          return check >= jumper ? el : undefined;
-        })
-      : JumpMove;
-
-  const clearBlocker = blocker.filter((el) => el);
-
-  return { clearBlocker };
+  return { JumpMove };
 };
 
 export default dataSetter;
 
 const typeGenerator = (type) => {
-  if (!type) return "";
+  if (!type) return '';
 
-  return type.includes("Queen")
-    ? type.split(" ")[0].replace(/[,]/g, " ").split(" ").pop()
-    : type.split(" ")[0].replace(/[,]/g, "");
+  return type.includes('Queen')
+    ? type.split(' ')[0].replace(/[,]/g, ' ').split(' ').pop()
+    : type.split(' ')[0].replace(/[,]/g, '');
 };

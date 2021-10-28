@@ -1,9 +1,9 @@
-import { combineArray } from "../../../constants/helper";
+import { combineArray } from '../../../constants/helper';
 
 const BlockFinder = (oneAxis, currentPlayer, boardData, direction) => {
   const blackBlocks = oneAxis
     .filter((el) => {
-      const Player = el.type.split(" ")[0].replace(/[,]/g, "");
+      const Player = el.type.split(' ')[0].replace(/[,]/g, '');
 
       return Player !== currentPlayer;
     })

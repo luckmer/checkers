@@ -1,20 +1,20 @@
-import { useState } from "react";
-import ChessMapGenerator from "./service/BoardGenerator";
+import { useState } from 'react';
+import ChessMapGenerator from './service/BoardGenerator';
 
-import { CheckersSection, Div } from "./css/CheckersSection.Style";
-import * as constants from "./constants/helper";
-import { moveIndex } from "./hooks/pawn/MovePawn";
-import { wallCreator } from "./constants/helper";
-import { WallPanelControl } from "./hooks/helper";
-import { direction } from "./constants";
+import { CheckersSection, Div } from './css/CheckersSection.Style';
+import * as constants from './constants/helper';
+import { moveIndex } from './hooks/pawn/MovePawn';
+import { wallCreator } from './constants/helper';
+import { WallPanelControl } from './hooks/helper';
+import { direction } from './constants';
 
-import switchPlayer from "./hooks/helper/player/switchPlayer";
-import BoardUpdate from "./hooks/helper/board/boardUpdate";
-import { ControlRightSite, ControlLeftSite } from "./hooks/pawn/index";
-import ControlQueen from "./hooks/Queen/ControlQueen";
+import switchPlayer from './hooks/helper/player/switchPlayer';
+import BoardUpdate from './hooks/helper/board/boardUpdate';
+import { ControlRightSite, ControlLeftSite } from './hooks/pawn/index';
+import ControlQueen from './hooks/Queen/ControlQueen';
 
 const App = () => {
-  const [currentPlayer, setCurrentPlayer] = useState("black");
+  const [currentPlayer, setCurrentPlayer] = useState('white');
 
   const { boardData, setBoard } = ChessMapGenerator();
 
@@ -22,18 +22,18 @@ const App = () => {
 
   const handleDragStart = (e) => {
     const targetId = e.target.id;
-    e.dataTransfer.setData("id", targetId);
+    e.dataTransfer.setData('id', targetId);
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
-    const id = Number(e.dataTransfer.getData("id"));
+    const id = Number(e.dataTransfer.getData('id'));
     const drop = Number(e.target.id);
 
     const takePawn = constants?.find(boardData, id);
     const takeDropPawn = constants?.find(boardData, drop);
 
-    const queens = ["whiteQueenwhite", "blackQueenblack"];
+    const queens = ['whiteQueenwhite', 'blackQueenblack'];
     const pawnType = constants.pawnType(takePawn.type);
     const pawnQueen = constants.queenType(takePawn.type);
 
@@ -60,11 +60,11 @@ const App = () => {
       id,
       move,
       pawnType,
-      drop,
+      drop
     };
 
     const { detectAttack, correctLeftMove, oneAxis } = ControlLeftSite({
-      ...props,
+      ...props
     });
     const { test, CorrectRightMove, oneYAxis } = ControlRightSite({ ...props });
     const {} = ControlQueen({ ...props });
@@ -87,7 +87,7 @@ const App = () => {
       currentPlayer,
       boardData,
       pawnType,
-      drop,
+      drop
     };
 
     const playerChanger = switchPlayer({ ...PROPS });
@@ -96,7 +96,7 @@ const App = () => {
       ? detectValues?.data.includes(drop)
       : detectValues && detectValues?.includes(drop);
 
-    if (takeDropPawn && takeDropPawn.type === "" && dropSwitcher) {
+    if (takeDropPawn && takeDropPawn.type === '' && dropSwitcher) {
       const update = BoardUpdate(
         takePawn,
         drop,
@@ -117,7 +117,7 @@ const App = () => {
   return (
     <CheckersSection>
       {boardData.map((el, i) => {
-        const check = el.Img === "Empty";
+        const check = el.Img === 'Empty';
 
         return (
           <Div
