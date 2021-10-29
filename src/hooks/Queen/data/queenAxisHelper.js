@@ -1,5 +1,5 @@
-import { axisAMoves, axisBMoves } from "./QueenAxis";
-import { GRID_SIZE, TOTAL_SIZE, BOARD_SIZE } from "../../../constants";
+import { axisAMoves, axisBMoves } from './QueenAxis';
+import { GRID_SIZE, TOTAL_SIZE, BOARD_SIZE } from '../../../constants';
 
 export const yAxisTop = (props) => {
   const { boardData, takePawn, direction, rightWall } = props;
@@ -58,6 +58,7 @@ export const xAxisBottom = (props) => {
 
 export const xAxisTop = (props) => {
   const { boardData, direction, upJumper, takePawn } = props;
+
   const XTop = boardData.filter(
     (item) =>
       parseFloat(item.id) % upJumper ===

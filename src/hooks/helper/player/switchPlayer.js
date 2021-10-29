@@ -1,5 +1,8 @@
-import { moveIndex } from "../../pawn/MovePawn";
-import dropPanel from "../drop/dropPanel";
+import { moveIndex } from '../../pawn/MovePawn';
+import dropPanel from '../drop/dropPanel';
+
+const getter = (arr, element) =>
+  arr.filter((el) => element.includes(el.id)).map(({ type }) => type);
 
 const switchPlayer = (props) => {
   const {
@@ -8,15 +11,12 @@ const switchPlayer = (props) => {
     currentPlayer,
     boardData,
     pawnType,
-    drop,
+    drop
   } = props;
 
   const dropPosition = moveIndex(pawnType, drop);
 
-  const getter = (arr, element) =>
-    arr.filter((el) => element.includes(el.id)).map(({ type }) => type);
-
-  const noMoves = getter(boardData, dropPosition).filter((el) => el !== "");
+  const noMoves = getter(boardData, dropPosition).filter((el) => el !== '');
 
   if (!noMoves.length) return false;
 
@@ -25,7 +25,7 @@ const switchPlayer = (props) => {
   if (CorrectRightMove || correctLeftMove) {
     const findDropObj = getter(boardData, IncreaseDrop);
 
-    return findDropObj.includes("") ? true : false;
+    return findDropObj.includes('') ? true : false;
   }
 
   return false;

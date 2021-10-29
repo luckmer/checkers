@@ -15,32 +15,214 @@ import dataSetter from '../helper/data/queenSetter';
 const ControlQueen = (props) => {
   const PROPS = { ...props };
 
-  const XCheckTop = XTopPanel({ ...PROPS }); //!
-  const YCheckTop = YTopPanel({ ...PROPS }); //?
-  const XCheckBottom = XBottomPanel({ ...PROPS }); //?
-  const YCheckBottom = YBottomPanel({ ...PROPS }); //!
+  const XCheckTop = XTopPanel({ ...PROPS });
+  const YCheckTop = YTopPanel({ ...PROPS });
+  const XCheckBottom = XBottomPanel({ ...PROPS });
+  const YCheckBottom = YBottomPanel({ ...PROPS });
 
-  return { XCheckTop, YCheckBottom };
+  return { XCheckTop, YCheckBottom, YCheckTop, XCheckBottom };
 };
 
 export default ControlQueen;
 
-const YTopPanel = (props) => {
-  const { takePawn, boardData, currentPlayer } = props;
+export const XBottomPanel = (props) => {
+  const { boardData, currentPlayer, switchQueen, drop, direction, leftWall } =
+    props;
+
+  const takePawn = switchQueen
+    ? {
+        ...props.takePawn,
+        id: drop,
+        _id: drop
+      }
+    : props.takePawn;
+
   const jumper = 7;
+  const pawnId = takePawn.id;
+  const moveAxisA = xAxisBottom({ boardData, takePawn, direction, leftWall });
+  const data = BlockFinder(moveAxisA, currentPlayer, boardData, jumper);
+  const equalPlayer = data.filter(({ id }) => id > pawnId);
 
-  const YAxis = yAxisTop(props);
-  const data = BlockFinder(YAxis, currentPlayer, boardData, jumper);
+  const clearMove = equalPlayer
+    .filter((el) => typeGenerator(el.type) === typeGenerator(takePawn.type))
+    .map(({ id }) => id)
+    .shift();
 
-  console.log(data);
-  return {};
+  const move = equalPlayer.filter(({ id }) => id < clearMove);
+  const moves = clearMove ? move : equalPlayer;
+
+  const getPawns = moves.filter(({ type }) => type).map(({ id }) => id);
+  const JumpsChecker = getPawns.map((index) => index + 7);
+
+  const checkJumps = boardData
+    .filter(({ id }) => JumpsChecker.includes(id))
+    .filter(({ type }) => type)
+    .shift()?.id;
+
+  const correctMove = checkJumps
+    ? moves.filter(({ id }) => id < checkJumps - jumper)
+    : moves;
+
+  const blockMoveAfterEnemy = correctMove
+    .filter(
+      ({ type }) =>
+        type !== '' && typeGenerator(type) !== typeGenerator(takePawn.type)
+    )
+    .pop()?.id;
+
+  const theSamePawn = [...moveAxisA]
+    .filter(
+      ({ type, id }) =>
+        id !== takePawn.id &&
+        typeGenerator(type) === typeGenerator(takePawn.type)
+    )
+    .map(({ id }) => id)
+    ?.shift();
+
+  const correctData = theSamePawn
+    ? correctMove.filter(({ id }) => id < theSamePawn)
+    : correctMove;
+
+  const checkDisplay = correctData
+    .map(({ type }) => type)
+    .every((index) => index === '');
+
+  const correctBlock = correctData.filter(
+    ({ id }) => id <= blockMoveAfterEnemy + jumper
+  );
+
+  const displayOnlyMove = moveAxisA.filter(
+    ({ type, id }) => id !== takePawn.id && type === ''
+  );
+
+  const onlyCorrectMove = moveAxisA
+    .filter(
+      ({ type, id }) =>
+        id !== takePawn.id &&
+        typeGenerator(type) === typeGenerator(takePawn.type)
+    )
+    .map(({ id }) => id)
+    ?.shift();
+
+  const displayMove = onlyCorrectMove
+    ? displayOnlyMove.filter(({ id }) => id < onlyCorrectMove)
+    : displayOnlyMove;
+
+  const display = displayMove.map(({ id }) => id);
+
+  const displayBlock = correctBlock.map(({ id }) => id);
+
+  const detectAttack = !checkDisplay
+    ? { data: displayBlock, jump: true }
+    : { data: display, jump: false };
+
+  return detectAttack;
 };
 
-const YBottomPanel = (props) => {
-  const { takePawn, boardData, currentPlayer } = props;
+export const YTopPanel = (props) => {
+  const { boardData, currentPlayer, switchQueen, drop, direction, rightWall } =
+    props;
+
+  const takePawn = switchQueen
+    ? {
+        ...props.takePawn,
+        id: drop,
+        _id: drop
+      }
+    : props.takePawn;
+
+  const jumper = 7;
+  const pawnId = takePawn.id;
+  const YAxis = yAxisTop({ boardData, takePawn, direction, rightWall });
+  const data = BlockFinder(YAxis, currentPlayer, boardData, jumper);
+  const equalPlayer = data.filter(({ id }) => id < pawnId);
+
+  const clearMove = equalPlayer
+    .filter((el) => typeGenerator(el.type) === typeGenerator(takePawn.type))
+    .map(({ id }) => id)
+    .pop();
+
+  const move = equalPlayer.filter(({ id }) => id > clearMove);
+  const moves = clearMove ? move : equalPlayer;
+
+  const getPawns = moves.filter(({ type }) => type).map(({ id }) => id);
+  const JumpsChecker = getPawns.map((el) => el - jumper);
+
+  const checkJumps = boardData
+    .filter(({ id }) => JumpsChecker.includes(id))
+    .filter(({ type }) => type)
+    .pop()?.id;
+
+  const correctMove = checkJumps
+    ? moves.filter(({ id }) => id > checkJumps + jumper)
+    : moves;
+
+  const theSamePawn = [...YAxis]
+    .filter(
+      ({ type, id }) =>
+        id !== takePawn.id &&
+        typeGenerator(type) === typeGenerator(takePawn.type)
+    )
+    .map(({ id }) => id)
+    ?.pop();
+
+  const correctData = theSamePawn
+    ? correctMove.filter(({ id }) => id > theSamePawn)
+    : correctMove;
+
+  const blockMoveAfterEnemy = correctMove
+    .filter(
+      ({ type }) =>
+        type !== '' && typeGenerator(type) !== typeGenerator(takePawn.type)
+    )
+    .shift()?.id;
+
+  const correctBlock = correctData.filter(
+    ({ id }) => id >= blockMoveAfterEnemy - jumper
+  );
+
+  const checkDisplay = correctData
+    .map(({ type }) => type)
+    .every((index) => index === '');
+
+  const onlyCorrectMove = YAxis.filter(
+    ({ type, id }) =>
+      id !== takePawn.id && typeGenerator(type) === typeGenerator(takePawn.type)
+  )
+    .map(({ id }) => id)
+    ?.pop();
+
+  const displayOnlyMove = YAxis.filter(({ id }) => id !== takePawn.id);
+
+  const displayMove = onlyCorrectMove
+    ? displayOnlyMove.filter(({ id }) => id > onlyCorrectMove)
+    : displayOnlyMove;
+
+  const display = displayMove.map(({ id }) => id);
+  const displayBlock = correctBlock.map(({ id }) => id);
+
+  const detectAttack = !checkDisplay
+    ? { data: displayBlock, jump: true }
+    : { data: display, jump: false };
+
+  return detectAttack;
+};
+
+export const YBottomPanel = (props) => {
+  const { boardData, currentPlayer, switchQueen, drop, direction, rightWall } =
+    props;
+
+  const takePawn = switchQueen
+    ? {
+        ...props.takePawn,
+        id: drop,
+        _id: drop
+      }
+    : props.takePawn;
+
   const jumper = 9;
 
-  const YAxis = yAxisBottom(props);
+  const YAxis = yAxisBottom({ boardData, takePawn, direction, rightWall });
   const data = BlockFinder(YAxis, currentPlayer, boardData, jumper);
 
   const equalPlayer = data.filter((el) => el.id > takePawn.id);
@@ -49,7 +231,6 @@ const YBottomPanel = (props) => {
     .filter((el) => typeGenerator(el.type) === typeGenerator(takePawn.type))
     .map(({ id }) => id)
     .shift();
-
   const move = equalPlayer.filter(({ id }) => id < clearMove);
 
   const moves = clearMove ? move : equalPlayer;
@@ -108,20 +289,34 @@ const YBottomPanel = (props) => {
     .map(({ type }) => type)
     .every((index) => index === '');
 
+  const display = displayMove.map(({ id }) => id);
+  const displayBlock = correctBlock.map(({ id }) => id);
+
   const detectAttack = !checkDisplay
-    ? { data: correctBlock, jump: true }
-    : { data: displayMove, jump: false };
+    ? { data: displayBlock, jump: true }
+    : { data: display, jump: false };
 
   return detectAttack;
 };
 
-const XTopPanel = (props) => {
+export const XTopPanel = (props) => {
   const PROPS = { ...props };
-  const { takePawn, boardData, currentPlayer, leftWall } = props;
+
+  const { boardData, currentPlayer, switchQueen, drop, direction, leftWall } =
+    props;
+
+  const takePawn = switchQueen
+    ? {
+        ...props.takePawn,
+        id: drop,
+        _id: drop
+      }
+    : props.takePawn;
+
   const upJumper = 9;
   const jumper = 9;
 
-  const xTopAxis = xAxisTop({ ...PROPS, upJumper });
+  const xTopAxis = xAxisTop({ boardData, direction, upJumper, takePawn });
   const moves = xTopAxis.map(({ id }) => id);
   const data = BlockFinder(xTopAxis, currentPlayer, boardData, 9);
 
@@ -225,12 +420,6 @@ const XTopPanel = (props) => {
       : { data: onlyMove ? move : displayMove, jump: false };
 
   return detectAttack;
-};
-
-const XBottomPanel = (props) => {
-  const moveAxisA = xAxisBottom(props);
-
-  return moveAxisA;
 };
 
 const typeGenerator = (type) =>

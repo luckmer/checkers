@@ -1,17 +1,22 @@
 import { useState } from 'react';
-import ChessMapGenerator from './service/BoardGenerator';
-
-import { CheckersSection, Div } from './css/CheckersSection.Style';
-import * as constants from './constants/helper';
-import { moveIndex } from './hooks/pawn/MovePawn';
-import { wallCreator } from './constants/helper';
-import { WallPanelControl } from './hooks/helper';
-import { direction } from './constants';
 
 import switchPlayer from './hooks/helper/player/switchPlayer';
 import BoardUpdate from './hooks/helper/board/boardUpdate';
+import ChessMapGenerator from './service/BoardGenerator';
+import * as constants from './constants/helper';
+
 import { ControlRightSite, ControlLeftSite } from './hooks/pawn/index';
-import ControlQueen from './hooks/Queen/ControlQueen';
+import { CheckersSection, Div } from './css/CheckersSection.Style';
+import { moveIndex } from './hooks/pawn/MovePawn';
+import { WallPanelControl } from './hooks/helper';
+import { wallCreator } from './constants/helper';
+import { direction } from './constants';
+import ControlQueen, {
+  XBottomPanel,
+  XTopPanel,
+  YBottomPanel,
+  YTopPanel
+} from './hooks/Queen/ControlQueen';
 
 const App = () => {
   const [currentPlayer, setCurrentPlayer] = useState('white');
@@ -34,6 +39,7 @@ const App = () => {
     const takeDropPawn = constants?.find(boardData, drop);
 
     const queens = ['whiteQueenwhite', 'blackQueenblack'];
+
     const pawnType = constants.pawnType(takePawn.type);
     const pawnQueen = constants.queenType(takePawn.type);
 
@@ -63,11 +69,23 @@ const App = () => {
       drop
     };
 
+    const { XCheckTop, YCheckBottom, YCheckTop, XCheckBottom } = ControlQueen({
+      ...props
+    });
+
+    //queen
+
+    const queenSwitcher = switchQueen(props);
+
+    //pawns
+
+    if (takePawn.type.toLowerCase().includes('queen')) return;
+
     const { detectAttack, correctLeftMove, oneAxis } = ControlLeftSite({
       ...props
     });
+
     const { test, CorrectRightMove, oneYAxis } = ControlRightSite({ ...props });
-    const {} = ControlQueen({ ...props });
 
     const sameMove = constants.checkArrays(test.data, detectAttack.data);
 
@@ -92,9 +110,14 @@ const App = () => {
 
     const playerChanger = switchPlayer({ ...PROPS });
 
-    const dropSwitcher = detectValues.data
-      ? detectValues?.data.includes(drop)
-      : detectValues && detectValues?.includes(drop);
+    const dropSwitcher =
+      detectValues && detectValues?.data
+        ? detectValues?.data.includes(drop)
+        : detectValues &&
+          [
+            ...detectValues?.detectAttack.data,
+            ...detectValues?.test.data
+          ]?.includes(drop);
 
     if (takeDropPawn && takeDropPawn.type === '' && dropSwitcher) {
       const update = BoardUpdate(
@@ -108,9 +131,9 @@ const App = () => {
 
       setBoard(update);
 
-      // if ((!CorrectRightMove && !correctLeftMove) || !playerChanger) {
-      //   setCurrentPlayer(currentPlayer === "white" ? "black" : "white");
-      // }
+      if ((!CorrectRightMove && !correctLeftMove) || !playerChanger) {
+        setCurrentPlayer(currentPlayer === 'white' ? 'black' : 'white');
+      }
     }
   };
 
@@ -138,3 +161,46 @@ const App = () => {
 };
 
 export default App;
+
+const generateMove = (arr, element) =>
+  arr.filter(({ id }) => element.includes(id)).map(({ type }) => type);
+
+const checker = (arr) => arr.includes('');
+
+const switchQueen = (props) => {
+  const { boardData, takePawn } = props;
+
+  if (!takePawn.type.toLowerCase().includes('queen')) return;
+
+  const switchQueen = true;
+
+  const Xbottom = XBottomPanel({ ...props, switchQueen });
+  const Ytop = YTopPanel({ ...props, switchQueen });
+  const Ybottom = YBottomPanel({ ...props, switchQueen });
+  const Xtop = XTopPanel({ ...props, switchQueen });
+
+  const xBottomAxis = generateMove(boardData, Xbottom.data);
+  const yBottomAxis = generateMove(boardData, Ybottom.data);
+  const xTopAxis = generateMove(boardData, Xtop.data);
+  const yTopAxis = generateMove(boardData, Ytop.data);
+
+  const noMoves = [
+    ...xBottomAxis,
+    ...yBottomAxis,
+    ...xTopAxis,
+    ...yTopAxis
+  ].filter((el) => el);
+
+  if (!noMoves.length) return false;
+
+  if (xBottomAxis || yBottomAxis || xTopAxis || yTopAxis) {
+    return checker(xBottomAxis) ||
+      checker(yBottomAxis) ||
+      checker(xTopAxis) ||
+      checker(yTopAxis)
+      ? true
+      : false;
+  }
+
+  return false;
+};
