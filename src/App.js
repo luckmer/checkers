@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import switchPlayer from './hooks/helper/player/switchPlayer';
-import BoardUpdate from './hooks/helper/board/boardUpdate';
+import { switchPlayer, switchQueen } from './hooks/helper/player/index';
+import { BoardUpdate, CreateQueen } from './hooks/helper/board/index';
 import ChessMapGenerator from './service/BoardGenerator';
 import * as constants from './constants/helper';
 
@@ -9,14 +9,8 @@ import { ControlRightSite, ControlLeftSite } from './hooks/pawn/index';
 import { CheckersSection, Div } from './css/CheckersSection.Style';
 import { moveIndex } from './hooks/pawn/MovePawn';
 import { WallPanelControl } from './hooks/helper';
-import { wallCreator } from './constants/helper';
 import { direction } from './constants';
-import ControlQueen, {
-  XBottomPanel,
-  XTopPanel,
-  YBottomPanel,
-  YTopPanel
-} from './hooks/Queen/ControlQueen';
+import ControlQueen from './hooks/Queen/ControlQueen';
 
 const App = () => {
   const [currentPlayer, setCurrentPlayer] = useState('white');
@@ -48,13 +42,13 @@ const App = () => {
     if (currentPlayer !== pawnSwitcher) return;
 
     const pawnMoves = moveIndex(pawnType, id);
-    const illegalPosition = WallPanelControl(boardData);
+
+    const { leftWall, rightWall, whiteWall, blackWall, illegalPosition } =
+      WallPanelControl(boardData);
+
     const clearMove = pawnMoves.filter((el) => !illegalPosition.includes(el));
 
     const move = illegalPosition.includes(id) ? clearMove : pawnMoves;
-
-    const leftWall = wallCreator(boardData, (item) => item.id % 8 === 1);
-    const rightWall = wallCreator(boardData, (item) => item.id % 8 === 0);
 
     const props = {
       boardData,
@@ -120,14 +114,17 @@ const App = () => {
           ]?.includes(drop);
 
     if (takeDropPawn && takeDropPawn.type === '' && dropSwitcher) {
-      const update = BoardUpdate(
-        takePawn,
-        drop,
-        oneYAxis,
-        oneAxis,
-        currentPlayer,
-        boardData
-      );
+      const update =
+        blackWall.includes(drop) || whiteWall.includes(drop)
+          ? CreateQueen(props)
+          : BoardUpdate(
+              takePawn,
+              drop,
+              oneYAxis,
+              oneAxis,
+              currentPlayer,
+              boardData
+            );
 
       setBoard(update);
 
@@ -161,46 +158,3 @@ const App = () => {
 };
 
 export default App;
-
-const generateMove = (arr, element) =>
-  arr.filter(({ id }) => element.includes(id)).map(({ type }) => type);
-
-const checker = (arr) => arr.includes('');
-
-const switchQueen = (props) => {
-  const { boardData, takePawn } = props;
-
-  if (!takePawn.type.toLowerCase().includes('queen')) return;
-
-  const switchQueen = true;
-
-  const Xbottom = XBottomPanel({ ...props, switchQueen });
-  const Ytop = YTopPanel({ ...props, switchQueen });
-  const Ybottom = YBottomPanel({ ...props, switchQueen });
-  const Xtop = XTopPanel({ ...props, switchQueen });
-
-  const xBottomAxis = generateMove(boardData, Xbottom.data);
-  const yBottomAxis = generateMove(boardData, Ybottom.data);
-  const xTopAxis = generateMove(boardData, Xtop.data);
-  const yTopAxis = generateMove(boardData, Ytop.data);
-
-  const noMoves = [
-    ...xBottomAxis,
-    ...yBottomAxis,
-    ...xTopAxis,
-    ...yTopAxis
-  ].filter((el) => el);
-
-  if (!noMoves.length) return false;
-
-  if (xBottomAxis || yBottomAxis || xTopAxis || yTopAxis) {
-    return checker(xBottomAxis) ||
-      checker(yBottomAxis) ||
-      checker(xTopAxis) ||
-      checker(yTopAxis)
-      ? true
-      : false;
-  }
-
-  return false;
-};

@@ -5,7 +5,7 @@ export const find = (boardData, ID) => boardData.find(({ _id }) => _id === ID);
 export const dataFinder = (arr, finder) => arr.find(finder);
 
 export const TargetType = (TYPE, POS) =>
-  TYPE && TYPE.split(" ")[POS].replace(/[,]/g, "");
+  TYPE && TYPE.split(' ')[POS].replace(/[,]/g, '');
 
 export const getArrayEdges = (arr, start, end) =>
   arr.filter((el) => el._id >= start && el._id <= end).map((el) => el._id);
@@ -24,9 +24,10 @@ export const wallDetector = (arr, element) => {
   return arr.filter(element).map(({ id }) => id)[0];
 };
 
-export const pawnType = (type) => type.split(" ")[0].replace(/[,]/g, "");
+export const pawnType = (type) => type.split(' ')[0].replace(/[,]/g, '');
+
 export const queenType = (type) =>
-  type.split(" ")[0].replace(/[,]/g, " ").split(" ").pop();
+  type.split(' ')[0].replace(/[,]/g, ' ').split(' ').pop();
 
 export const checkArrays = (arr, tester) => {
   for (let i = 0; i < arr.length; i++) {

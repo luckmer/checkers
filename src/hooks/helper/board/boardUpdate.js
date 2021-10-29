@@ -1,4 +1,4 @@
-import { whiteAxis, blackAxis, values } from "../../../constants/helper";
+import { whiteAxis, blackAxis, values } from '../../../constants/helper';
 
 const BoardUpdate = (
   takePawn,
@@ -19,8 +19,8 @@ const BoardUpdate = (
   const whiteX = whiteAxis(clearX, pawn, jump);
   const whiteY = whiteAxis(clearY, pawn, jump);
 
-  const switchX = currentPlayer === "white" ? whiteX : blackX;
-  const switchY = currentPlayer === "white" ? whiteY : blackY;
+  const switchX = currentPlayer === 'white' ? whiteX : blackX;
+  const switchY = currentPlayer === 'white' ? whiteY : blackY;
 
   const XJump = clearX.includes(jump) ? switchX : undefined;
   const YJump = clearY.includes(jump) ? switchY : undefined;
@@ -37,7 +37,7 @@ const BoardUpdate = (
       (YJump && YJump.includes(ids)) ||
       ids === Number(takePawn.id)
     ) {
-      return { ...el, Img: "Empty", type: "" };
+      return { ...el, Img: 'Empty', type: '' };
     }
 
     return el;
