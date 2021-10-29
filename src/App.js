@@ -39,6 +39,7 @@ const App = () => {
 
     const pawnSwitcher = queens.includes(pawnType) ? pawnQueen : pawnType;
 
+    console.log(currentPlayer, pawnSwitcher);
     if (currentPlayer !== pawnSwitcher) return;
 
     const pawnMoves = moveIndex(pawnType, id);
@@ -72,13 +73,29 @@ const App = () => {
 
       const queenSwitcher = switchQueen(props);
 
+      const moves = [
+        ...XCheckTop.data,
+        ...YCheckBottom.data,
+        ...YCheckTop.data,
+        ...XCheckBottom.data
+      ];
+
       console.log(
-        queenSwitcher,
-        XCheckTop,
-        YCheckBottom,
-        YCheckTop,
-        XCheckBottom
+        XCheckTop.data,
+        YCheckBottom.data,
+        YCheckTop.data,
+        XCheckBottom.data
       );
+      const dropSwitcher = moves.includes(drop);
+
+      if (takeDropPawn && takeDropPawn.type === '' && dropSwitcher) {
+        const update = CreateQueen(props);
+        setBoard(update);
+
+        if (!queenSwitcher) {
+          setCurrentPlayer(currentPlayer === 'white' ? 'black' : 'white');
+        }
+      }
     } else {
       const { detectAttack, correctLeftMove, oneAxis } = ControlLeftSite({
         ...props

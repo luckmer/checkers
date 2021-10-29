@@ -340,7 +340,7 @@ export const XTopPanel = (props) => {
 
   const type = typeGenerator(takePawn.type);
 
-  const illegalWall = WallPanelControl(boardData);
+  const { illegalWall } = WallPanelControl(boardData);
 
   const detectMove = xTopAxis
     .filter(
@@ -350,7 +350,7 @@ export const XTopPanel = (props) => {
     .map((el) => {
       const id = Number(el.id);
 
-      return illegalWall.includes(id) ? undefined : id;
+      return illegalWall?.includes(id) ? undefined : id;
     })
     .filter((el) => el);
 
