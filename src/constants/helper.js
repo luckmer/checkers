@@ -27,7 +27,9 @@ export const wallDetector = (arr, element) => {
 export const pawnType = (type) => type.split(' ')[0].replace(/[,]/g, '');
 
 export const queenType = (type) =>
-  type.split(' ')[0].replace(/[,]/g, ' ').split(' ').pop();
+  type.includes('Queen')
+    ? type.split(' ').pop()
+    : type.split(' ')[0].replace(/[,]/g, '');
 
 export const checkArrays = (arr, tester) => {
   for (let i = 0; i < arr.length; i++) {

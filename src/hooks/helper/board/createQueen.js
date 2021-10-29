@@ -1,5 +1,6 @@
 import BlackQueen from '../../../image/BlackQueen.png';
 import WhiteQueen from '../../../image/whiteQueen.png';
+
 import { pawnType } from '../../../constants/helper';
 
 const CreateQueen = (props) => {
@@ -15,7 +16,7 @@ const CreateQueen = (props) => {
     if (id === Number(drop)) {
       return {
         ...el,
-        type: `${color}Queen, ${takePawn.type}`,
+        type: `${color}Queen, ${type}`,
         Img: type === 'white' ? WhiteQueen : BlackQueen
       };
     }

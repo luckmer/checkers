@@ -1,14 +1,16 @@
+import { queenType } from '../../../constants/helper';
+
 const dataSetter = (props) => {
   const { getNumbers, boardData, jumper, id, currentPlayer } = props;
 
   const increaseJumper = jumper + jumper;
 
   const positionBeforeUpdate = getNumbers.map((el) =>
-    currentPlayer === "white" ? el + jumper : el - jumper
+    currentPlayer === 'white' ? el + jumper : el - jumper
   );
 
   const positionFutureUpdate = getNumbers.map((el) =>
-    currentPlayer === "white" ? el + increaseJumper : el - jumper
+    currentPlayer === 'white' ? el + increaseJumper : el - jumper
   );
 
   const positionAfter = boardData.filter((el) => getNumbers.includes(el.id));
@@ -28,19 +30,19 @@ const dataSetter = (props) => {
       const optionB = positionBefore[index];
       const optionC = positionFuture[index];
 
-      const typeA = optionA && typeGenerator(optionA.type);
-      const typeB = optionB && typeGenerator(optionB.type);
-      const typeC = optionC && typeGenerator(optionC.type);
+      const typeA = optionA && queenType(optionA.type);
+      const typeB = optionB && queenType(optionB.type);
+      const typeC = optionC && queenType(optionC.type);
 
       const switchOption = (id) =>
-        currentPlayer === "white" ? id - jumper : id + jumper;
+        currentPlayer === 'white' ? id - jumper : id + jumper;
 
       if (optionC && switchOption(optionC && optionC.id) === optionB.id) {
         if (typeB === typeC) return undefined;
       }
 
       if (switchOption(optionB && optionB.id) === optionA.id) {
-        if (typeA !== typeB && optionA.type === "") {
+        if (typeA !== typeB && optionA.type === '') {
           return optionA.id;
         }
       }
@@ -51,7 +53,7 @@ const dataSetter = (props) => {
   const blocker =
     JumpMove.length === 1
       ? JumpMove.map((el) => {
-          const check = currentPlayer === "white" ? id - el : el - id;
+          const check = currentPlayer === 'white' ? id - el : el - id;
           return check >= increaseJumper ? el : undefined;
         })
       : JumpMove;
@@ -62,11 +64,3 @@ const dataSetter = (props) => {
 };
 
 export default dataSetter;
-
-const typeGenerator = (type) => {
-  if (!type) return "";
-
-  return type.includes("Queen")
-    ? type.split(" ")[0].replace(/[,]/g, " ").split(" ").pop()
-    : type.split(" ")[0].replace(/[,]/g, "");
-};

@@ -1,10 +1,11 @@
-import BlockFinder from "../board/blockFinder";
-import { wallDetector } from "../../../constants/helper";
-import { direction, downJumper, nextRow } from "../../../constants";
-import { yCheckTopBlack, yCheckTopWhite } from "./constants";
+import BlockFinder from '../board/blockFinder';
+import { wallDetector } from '../../../constants/helper';
+import { direction, downJumper, nextRow } from '../../../constants';
+import { yCheckTopBlack, yCheckTopWhite } from './constants';
 
 const YAxis = (props) => {
   const { boardData, takePawn, rightWall, leftWall, currentPlayer } = props;
+
   const PROPS = { boardData, takePawn, downJumper, direction, nextRow };
 
   const YCheckTopWhite = yCheckTopWhite({ ...PROPS });
@@ -36,7 +37,7 @@ const YAxis = (props) => {
     !YBlackWallCollision ? el : el.id <= YBlackWallCollision
   );
 
-  const oneYAxis = currentPlayer === "white" ? YTopWall : YBlackWall;
+  const oneYAxis = currentPlayer === 'white' ? YTopWall : YBlackWall;
 
   const properties = BlockFinder(
     oneYAxis,
@@ -46,7 +47,7 @@ const YAxis = (props) => {
   );
 
   const switchCleaner =
-    currentPlayer === "white" ? YTopWallCollision : YBlackWallCollision;
+    currentPlayer === 'white' ? YTopWallCollision : YBlackWallCollision;
 
   return { switchCleaner, properties, oneYAxis };
 };

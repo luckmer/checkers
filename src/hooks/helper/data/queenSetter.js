@@ -1,3 +1,5 @@
+import { queenType } from '../../../constants/helper';
+
 const dataSetter = (props) => {
   const { getNumbers, boardData, jumper } = props;
 
@@ -24,9 +26,9 @@ const dataSetter = (props) => {
       const optionB = positionBefore[index];
       const optionC = positionFuture[index];
 
-      const typeA = optionA && typeGenerator(optionA.type);
-      const typeB = optionB && typeGenerator(optionB.type);
-      const typeC = optionC && typeGenerator(optionC.type);
+      const typeA = optionA && queenType(optionA.type);
+      const typeB = optionB && queenType(optionB.type);
+      const typeC = optionC && queenType(optionC.type);
 
       const switchOption = (id) => id - jumper;
 
@@ -47,11 +49,3 @@ const dataSetter = (props) => {
 };
 
 export default dataSetter;
-
-const typeGenerator = (type) => {
-  if (!type) return '';
-
-  return type.includes('Queen')
-    ? type.split(' ')[0].replace(/[,]/g, ' ').split(' ').pop()
-    : type.split(' ')[0].replace(/[,]/g, '');
-};

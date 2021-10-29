@@ -1,13 +1,8 @@
 import { whiteAxis, blackAxis, values } from '../../../constants/helper';
 
-const BoardUpdate = (
-  takePawn,
-  drop,
-  oneYAxis,
-  oneAxis,
-  currentPlayer,
-  boardData
-) => {
+const BoardUpdate = (props) => {
+  const { oneYAxis, oneAxis, takePawn, drop, currentPlayer, boardData } = props;
+
   const pawn = takePawn.id;
   const jump = drop;
 
@@ -42,6 +37,7 @@ const BoardUpdate = (
 
     return el;
   });
+
   return update;
 };
 

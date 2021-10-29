@@ -1,8 +1,9 @@
-import { direction, upJumper } from "../../../constants";
-import { xCheckTopWhite, xCheckTopBlack, wallCollision } from "./constants";
+import { direction, upJumper } from '../../../constants';
+import { xCheckTopWhite, xCheckTopBlack, wallCollision } from './constants';
 
 const Axis = (props) => {
   const { boardData, takePawn, leftWall, rightWall, currentPlayer } = props;
+
   const PROPS = { boardData, direction, upJumper, takePawn };
 
   const XCheckTopWhite = xCheckTopWhite({ ...PROPS });
@@ -21,7 +22,7 @@ const Axis = (props) => {
     !XBlackWallCollision ? el : el.id <= XBlackWallCollision
   );
 
-  const oneAxis = currentPlayer === "white" ? XTopWall : XBlackWall;
+  const oneAxis = currentPlayer === 'white' ? XTopWall : XBlackWall;
 
   return oneAxis;
 };

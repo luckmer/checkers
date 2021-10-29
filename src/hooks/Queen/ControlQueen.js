@@ -9,9 +9,6 @@ import {
 import BlockFinder from '../helper/board/blockFinder';
 import dataSetter from '../helper/data/queenSetter';
 
-// type: `${color}Queen, ${takePawn.type}`,
-// Img: type === "white" ? WhiteQueen : BlackQueen,
-
 const ControlQueen = (props) => {
   const PROPS = { ...props };
 
@@ -424,5 +421,5 @@ export const XTopPanel = (props) => {
 
 const typeGenerator = (type) =>
   type.includes('Queen')
-    ? type.split(' ')[0].replace(/[,]/g, ' ').split(' ').pop()
+    ? type.split(' ').pop()
     : type.split(' ')[0].replace(/[,]/g, '');

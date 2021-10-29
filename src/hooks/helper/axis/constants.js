@@ -1,18 +1,24 @@
-export const xCheckTopBlack = ({ boardData, direction, upJumper, takePawn }) =>
-  boardData.filter(
+export const xCheckTopBlack = (props) => {
+  const { boardData, direction, upJumper, takePawn } = props;
+
+  return boardData.filter(
     (item) =>
       parseFloat(item.id) % upJumper ===
         (takePawn._id % upJumper) - direction - 1 &&
       parseFloat(item.id) >= takePawn._id
   );
+};
 
-export const xCheckTopWhite = ({ boardData, direction, upJumper, takePawn }) =>
-  boardData.filter(
+export const xCheckTopWhite = (props) => {
+  const { boardData, direction, upJumper, takePawn } = props;
+
+  return boardData.filter(
     (item) =>
       parseFloat(item.id) % upJumper ===
         (takePawn._id % upJumper) - direction - 1 &&
       parseFloat(item.id) <= takePawn._id
   );
+};
 
 export const yCheckTopBlack = (props) => {
   const { boardData, takePawn, downJumper, direction, nextRow } = props;

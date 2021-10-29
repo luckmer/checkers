@@ -32,7 +32,7 @@ const App = () => {
     const takePawn = constants?.find(boardData, id);
     const takeDropPawn = constants?.find(boardData, drop);
 
-    const queens = ['whiteQueenwhite', 'blackQueenblack'];
+    const queens = ['whiteQueen', 'blackQueen'];
 
     const pawnType = constants.pawnType(takePawn.type);
     const pawnQueen = constants.queenType(takePawn.type);
@@ -63,73 +63,74 @@ const App = () => {
       drop
     };
 
-    const { XCheckTop, YCheckBottom, YCheckTop, XCheckBottom } = ControlQueen({
-      ...props
-    });
+    if (pawnType.toLowerCase().includes('queen')) {
+      const { XCheckTop, YCheckBottom, YCheckTop, XCheckBottom } = ControlQueen(
+        {
+          ...props
+        }
+      );
 
-    //queen
+      const queenSwitcher = switchQueen(props);
 
-    const queenSwitcher = switchQueen(props);
+      console.log(
+        queenSwitcher,
+        XCheckTop,
+        YCheckBottom,
+        YCheckTop,
+        XCheckBottom
+      );
+    } else {
+      const { detectAttack, correctLeftMove, oneAxis } = ControlLeftSite({
+        ...props
+      });
 
-    //pawns
+      const { test, CorrectRightMove, oneYAxis } = ControlRightSite({
+        ...props
+      });
 
-    if (takePawn.type.toLowerCase().includes('queen')) return;
+      const sameMove = constants.checkArrays(test.data, detectAttack.data);
 
-    const { detectAttack, correctLeftMove, oneAxis } = ControlLeftSite({
-      ...props
-    });
+      const detectValues = sameMove
+        ? detectAttack
+        : test.jump && detectAttack.jump
+        ? { detectAttack, test }
+        : test.jump && test.data.length
+        ? test
+        : detectAttack.jump && detectAttack.data.length
+        ? detectAttack
+        : move;
 
-    const { test, CorrectRightMove, oneYAxis } = ControlRightSite({ ...props });
+      const PROPS = {
+        CorrectRightMove,
+        correctLeftMove,
+        currentPlayer,
+        boardData,
+        pawnType,
+        drop
+      };
 
-    const sameMove = constants.checkArrays(test.data, detectAttack.data);
+      const playerChanger = switchPlayer({ ...PROPS });
 
-    const detectValues = sameMove
-      ? detectAttack
-      : test.jump && detectAttack.jump
-      ? { detectAttack, test }
-      : test.jump && test.data.length
-      ? test
-      : detectAttack.jump && detectAttack.data.length
-      ? detectAttack
-      : move;
+      const dropSwitcher =
+        detectValues && detectValues?.data
+          ? detectValues?.data.includes(drop)
+          : detectValues &&
+            [
+              ...detectValues?.detectAttack.data,
+              ...detectValues?.test.data
+            ]?.includes(drop);
 
-    const PROPS = {
-      CorrectRightMove,
-      correctLeftMove,
-      currentPlayer,
-      boardData,
-      pawnType,
-      drop
-    };
+      if (takeDropPawn && takeDropPawn.type === '' && dropSwitcher) {
+        const update =
+          blackWall.includes(drop) || whiteWall.includes(drop)
+            ? CreateQueen(props)
+            : BoardUpdate({ ...props, oneYAxis, oneAxis });
 
-    const playerChanger = switchPlayer({ ...PROPS });
+        setBoard(update);
 
-    const dropSwitcher =
-      detectValues && detectValues?.data
-        ? detectValues?.data.includes(drop)
-        : detectValues &&
-          [
-            ...detectValues?.detectAttack.data,
-            ...detectValues?.test.data
-          ]?.includes(drop);
-
-    if (takeDropPawn && takeDropPawn.type === '' && dropSwitcher) {
-      const update =
-        blackWall.includes(drop) || whiteWall.includes(drop)
-          ? CreateQueen(props)
-          : BoardUpdate(
-              takePawn,
-              drop,
-              oneYAxis,
-              oneAxis,
-              currentPlayer,
-              boardData
-            );
-
-      setBoard(update);
-
-      if ((!CorrectRightMove && !correctLeftMove) || !playerChanger) {
-        setCurrentPlayer(currentPlayer === 'white' ? 'black' : 'white');
+        if ((!CorrectRightMove && !correctLeftMove) || !playerChanger) {
+          setCurrentPlayer(currentPlayer === 'white' ? 'black' : 'white');
+        }
       }
     }
   };
