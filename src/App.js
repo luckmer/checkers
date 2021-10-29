@@ -39,7 +39,6 @@ const App = () => {
 
     const pawnSwitcher = queens.includes(pawnType) ? pawnQueen : pawnType;
 
-    console.log(currentPlayer, pawnSwitcher);
     if (currentPlayer !== pawnSwitcher) return;
 
     const pawnMoves = moveIndex(pawnType, id);
@@ -50,6 +49,10 @@ const App = () => {
     const clearMove = pawnMoves.filter((el) => !illegalPosition.includes(el));
 
     const move = illegalPosition.includes(id) ? clearMove : pawnMoves;
+
+    //TODO
+    // player can't do attack after single jump
+    // if pawn that queen can attack is not possible change player
 
     const props = {
       boardData,
@@ -74,22 +77,24 @@ const App = () => {
       const queenSwitcher = switchQueen(props);
 
       const moves = [
-        ...XCheckTop.data,
-        ...YCheckBottom.data,
-        ...YCheckTop.data,
-        ...XCheckBottom.data
+        { data: XCheckTop.data, arr: 'shift' },
+        { data: YCheckBottom.data, arr: 'pop' },
+        { data: YCheckTop.data, arr: 'shift' },
+        { data: XCheckBottom.data, arr: 'shift' }
       ];
+      const moveData = moves.map(({ data }) => data);
 
-      console.log(
-        XCheckTop.data,
-        YCheckBottom.data,
-        YCheckTop.data,
-        XCheckBottom.data
-      );
-      const dropSwitcher = moves.includes(drop);
+      const clearRoad = moves.find((el) => el.data.includes(drop));
+
+      // detect enemy : if enemy colides with wall clear moves else start clearRoad
+      //if there is only one and colides with wall change move
+
+      console.log(clearRoad);
+
+      const dropSwitcher = constants.combineArray(moveData).includes(drop);
 
       if (takeDropPawn && takeDropPawn.type === '' && dropSwitcher) {
-        const update = CreateQueen(props);
+        const update = CreateQueen({ ...props, clearRoad });
         setBoard(update);
 
         if (!queenSwitcher) {
