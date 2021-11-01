@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { switchPlayer, switchQueen } from './hooks/helper/player/index';
+import { switchPlayer, SwitchQueen } from './hooks/helper/player/index';
 import { BoardUpdate, CreateQueen } from './hooks/helper/board/index';
 import ChessMapGenerator from './service/BoardGenerator';
 import * as constants from './constants/helper';
@@ -50,10 +50,6 @@ const App = () => {
 
     const move = illegalPosition.includes(id) ? clearMove : pawnMoves;
 
-    //TODO
-    // player can't do attack after single jump
-    // if pawn that queen can attack is not possible change player
-
     const props = {
       boardData,
       takePawn,
@@ -74,28 +70,23 @@ const App = () => {
         }
       );
 
-      const queenSwitcher = switchQueen(props);
-
       const moves = [
-        { data: XCheckTop.data, arr: 'shift' },
-        { data: YCheckBottom.data, arr: 'pop' },
-        { data: YCheckTop.data, arr: 'shift' },
-        { data: XCheckBottom.data, arr: 'shift' }
+        { data: XCheckTop.data, arr: '1', axis: 'less' },
+        { data: YCheckBottom.data, arr: '2', axis: 'less' },
+        { data: YCheckTop.data, arr: '3', axis: 'more' },
+        { data: XCheckBottom.data, arr: '4', axis: 'less' }
       ];
       const moveData = moves.map(({ data }) => data);
 
       const clearRoad = moves.find((el) => el.data.includes(drop));
 
-      // detect enemy : if enemy colides with wall clear moves else start clearRoad
-      //if there is only one and colides with wall change move
-
-      console.log(clearRoad);
-
+      console.log(moveData);
       const dropSwitcher = constants.combineArray(moveData).includes(drop);
 
       if (takeDropPawn && takeDropPawn.type === '' && dropSwitcher) {
         const update = CreateQueen({ ...props, clearRoad });
         setBoard(update);
+        const queenSwitcher = SwitchQueen(props);
 
         if (!queenSwitcher) {
           setCurrentPlayer(currentPlayer === 'white' ? 'black' : 'white');
@@ -181,3 +172,7 @@ const App = () => {
 };
 
 export default App;
+
+//TODO
+//fix queen switcher
+//fix queen clear method

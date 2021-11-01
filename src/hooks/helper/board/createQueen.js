@@ -1,6 +1,6 @@
 import BlackQueen from '../../../image/BlackQueen.png';
 import WhiteQueen from '../../../image/whiteQueen.png';
-import { combineArray, queenType } from '../../../constants/helper';
+import { queenType } from '../../../constants/helper';
 
 const CreateQueen = (props) => {
   const { boardData, drop, takePawn, clearRoad } = props;
@@ -22,9 +22,7 @@ const CreateQueen = (props) => {
 
     if (road.length) {
       const switchOption =
-        clearRoad.arr === 'shift' ? [...road].shift() : [...road].pop();
-
-      console.log(clearRoad.arr);
+        clearRoad.axis === 'less' ? [...road].pop() : [...road].shift();
       if (road.includes(id) && switchOption === drop) {
         return {
           ...el,

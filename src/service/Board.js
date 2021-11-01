@@ -1,9 +1,8 @@
 import WhiteCheckers from '../image/white.png';
 import BlackCheckers from '../image/black.png';
+import whiteQueen from '../image/whiteQueen.png';
 
 const boardMap = [
-  ['Empty', ''],
-  // [BlackCheckers, 'black, 24'],
   ['Empty', ''],
   // [BlackCheckers, 'black, 23'],
   ['Empty', ''],
@@ -17,9 +16,10 @@ const boardMap = [
   ['Empty', ''],
   // [BlackCheckers, 'black, 17'],
   ['Empty', ''],
+  ['Empty', ''],
+  ['Empty', ''],
+  ['Empty', ''],
   [WhiteCheckers, 'white, 1'],
-  ['Empty', ''],
-  ['Empty', ''],
   ['Empty', ''],
   ['Empty', ''],
   ['Empty', ''],
@@ -52,11 +52,12 @@ const boardMap = [
   ['Empty', ''],
 
   ['Empty', ''],
+  [whiteQueen, 'whiteQueen, white'],
   [WhiteCheckers, 'white, 2'],
   ['Empty', ''],
   [WhiteCheckers, 'white, 3'],
   ['Empty', ''],
-  [WhiteCheckers, 'white, 4'],
+
   ['Empty', ''],
   ['Empty', ''],
   // [WhiteCheckers, 'white, 5'],

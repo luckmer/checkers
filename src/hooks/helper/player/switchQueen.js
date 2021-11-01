@@ -10,8 +10,8 @@ const generateMove = (arr, element) =>
 
 const checker = (arr) => arr.includes('');
 
-const switchQueen = (props) => {
-  const { boardData, takePawn } = props;
+const SwitchQueen = (props) => {
+  const { boardData, takePawn, drop, rightWall, leftWall } = props;
 
   if (!takePawn.type.toLowerCase().includes('queen')) return;
 
@@ -36,6 +36,29 @@ const switchQueen = (props) => {
 
   if (!noMoves.length) return false;
 
+  const findWallBlocks = [
+    ...xBottomAxis,
+    ...yBottomAxis,
+    ...xTopAxis,
+    ...yTopAxis
+  ];
+
+  if (drop % 8 === 2) {
+    const getBlocks = WallBlockFinder(findWallBlocks, boardData);
+
+    const leftIncludes = leftWall.some((el) => getBlocks.includes(el));
+
+    if (leftIncludes) return false;
+  }
+
+  if (drop % 8 === 7) {
+    const getBlocks = WallBlockFinder(findWallBlocks, boardData);
+
+    const rightIncludes = rightWall.some((el) => getBlocks.includes(el));
+
+    if (rightIncludes) return false;
+  }
+
   if (xBottomAxis || yBottomAxis || xTopAxis || yTopAxis) {
     return checker(xBottomAxis) ||
       checker(yBottomAxis) ||
@@ -48,4 +71,14 @@ const switchQueen = (props) => {
   return false;
 };
 
-export default switchQueen;
+export default SwitchQueen;
+
+const WallBlockFinder = (findWallBlocks, boardData) => {
+  const wallBlocks = findWallBlocks.filter((el) => el);
+
+  const getBlocks = boardData
+    .filter(({ type }) => wallBlocks.includes(type))
+    .map(({ id }) => id);
+
+  return getBlocks;
+};
