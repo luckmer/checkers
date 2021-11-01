@@ -78,15 +78,13 @@ const App = () => {
       ];
       const moveData = moves.map(({ data }) => data);
 
-      const clearRoad = moves.find((el) => el.data.includes(drop));
-
-      console.log(moveData);
       const dropSwitcher = constants.combineArray(moveData).includes(drop);
+      const clearRoad = moves.find((el) => el.data.includes(drop));
 
       if (takeDropPawn && takeDropPawn.type === '' && dropSwitcher) {
         const update = CreateQueen({ ...props, clearRoad });
         setBoard(update);
-        const queenSwitcher = SwitchQueen(props);
+        const queenSwitcher = SwitchQueen({ ...props, clearRoad });
 
         if (!queenSwitcher) {
           setCurrentPlayer(currentPlayer === 'white' ? 'black' : 'white');
@@ -176,3 +174,6 @@ export default App;
 //TODO
 //fix queen switcher
 //fix queen clear method
+//add game over
+// if user did jump on line that has no enemies switch player : if current line has enemies setup attack
+// only for that one

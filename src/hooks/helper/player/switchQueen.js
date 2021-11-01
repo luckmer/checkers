@@ -5,46 +5,31 @@ import {
   YTopPanel
 } from '../../Queen/ControlQueen';
 
-const generateMove = (arr, element) =>
-  arr.filter(({ id }) => element.includes(id)).map(({ type }) => type);
-
-const checker = (arr) => arr.includes('');
-
 const SwitchQueen = (props) => {
-  const { boardData, takePawn, drop, rightWall, leftWall } = props;
+  const { boardData, takePawn, drop, rightWall, leftWall, clearRoad } = props;
 
   if (!takePawn.type.toLowerCase().includes('queen')) return;
 
   const switchQueen = true;
 
-  const Xbottom = XBottomPanel({ ...props, switchQueen });
-  const Ytop = YTopPanel({ ...props, switchQueen });
-  const Ybottom = YBottomPanel({ ...props, switchQueen });
-  const Xtop = XTopPanel({ ...props, switchQueen });
+  const { xBottomAxis, yBottomAxis, xTopAxis, yTopAxis } = AxisPanel(
+    props,
+    switchQueen,
+    boardData
+  );
 
-  const xBottomAxis = generateMove(boardData, Xbottom.data);
-  const yBottomAxis = generateMove(boardData, Ybottom.data);
-  const xTopAxis = generateMove(boardData, Xtop.data);
-  const yTopAxis = generateMove(boardData, Ytop.data);
+  const noMoves = [...xBottomAxis, ...yBottomAxis, ...xTopAxis, ...yTopAxis];
 
-  const noMoves = [
-    ...xBottomAxis,
-    ...yBottomAxis,
-    ...xTopAxis,
-    ...yTopAxis
-  ].filter((el) => el);
+  const movesResult = noMoves.filter((el) => el);
 
-  if (!noMoves.length) return false;
+  const getRoad = generateMove(boardData, clearRoad.data).filter((el) => el);
 
-  const findWallBlocks = [
-    ...xBottomAxis,
-    ...yBottomAxis,
-    ...xTopAxis,
-    ...yTopAxis
-  ];
+  if (!getRoad.length) return false;
+
+  if (!movesResult.length) return false;
 
   if (drop % 8 === 2) {
-    const getBlocks = WallBlockFinder(findWallBlocks, boardData);
+    const getBlocks = WallBlockFinder(noMoves, boardData);
 
     const leftIncludes = leftWall.some((el) => getBlocks.includes(el));
 
@@ -52,7 +37,7 @@ const SwitchQueen = (props) => {
   }
 
   if (drop % 8 === 7) {
-    const getBlocks = WallBlockFinder(findWallBlocks, boardData);
+    const getBlocks = WallBlockFinder(noMoves, boardData);
 
     const rightIncludes = rightWall.some((el) => getBlocks.includes(el));
 
@@ -73,6 +58,11 @@ const SwitchQueen = (props) => {
 
 export default SwitchQueen;
 
+const generateMove = (arr, element) =>
+  arr.filter(({ id }) => element.includes(id)).map(({ type }) => type);
+
+const checker = (arr) => arr.includes('');
+
 const WallBlockFinder = (findWallBlocks, boardData) => {
   const wallBlocks = findWallBlocks.filter((el) => el);
 
@@ -81,4 +71,18 @@ const WallBlockFinder = (findWallBlocks, boardData) => {
     .map(({ id }) => id);
 
   return getBlocks;
+};
+
+const AxisPanel = (props, switchQueen, boardData) => {
+  const Xbottom = XBottomPanel({ ...props, switchQueen });
+  const Ytop = YTopPanel({ ...props, switchQueen });
+  const Ybottom = YBottomPanel({ ...props, switchQueen });
+  const Xtop = XTopPanel({ ...props, switchQueen });
+
+  const xBottomAxis = generateMove(boardData, Xbottom.data);
+  const yBottomAxis = generateMove(boardData, Ybottom.data);
+  const xTopAxis = generateMove(boardData, Xtop.data);
+  const yTopAxis = generateMove(boardData, Ytop.data);
+
+  return { xBottomAxis, yBottomAxis, xTopAxis, yTopAxis };
 };
