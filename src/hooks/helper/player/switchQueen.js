@@ -22,11 +22,19 @@ const SwitchQueen = (props) => {
 
   const movesResult = noMoves.filter((el) => el);
 
-  const getRoad = generateMove(boardData, clearRoad.data).filter((el) => el);
+  const roadAxis = clearRoad.axis;
+  const getRoad = boardData.filter(({ id }) => clearRoad.data.includes(id));
 
-  if (!getRoad.length) return false;
+  const emptyMove = getRoad
+    .filter(({ id }) => {
+      return roadAxis === 'more'
+        ? id > drop && id < takePawn.id
+        : id < drop && id > takePawn.id;
+    })
+    .filter(({ type }) => type)
+    .map(({ type }) => type);
 
-  if (!movesResult.length) return false;
+  if (!movesResult.length || !emptyMove.length || !getRoad.length) return false;
 
   if (drop % 8 === 2) {
     const getBlocks = WallBlockFinder(noMoves, boardData);
@@ -83,6 +91,5 @@ const AxisPanel = (props, switchQueen, boardData) => {
   const yBottomAxis = generateMove(boardData, Ybottom.data);
   const xTopAxis = generateMove(boardData, Xtop.data);
   const yTopAxis = generateMove(boardData, Ytop.data);
-
   return { xBottomAxis, yBottomAxis, xTopAxis, yTopAxis };
 };

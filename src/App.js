@@ -34,8 +34,8 @@ const App = () => {
 
     const queens = ['whiteQueen', 'blackQueen'];
 
-    const pawnType = constants.pawnType(takePawn.type);
-    const pawnQueen = constants.queenType(takePawn.type);
+    const pawnType = constants.pawnType(takePawn?.type);
+    const pawnQueen = constants.queenType(takePawn?.type);
 
     const pawnSwitcher = queens.includes(pawnType) ? pawnQueen : pawnType;
 
@@ -71,19 +71,55 @@ const App = () => {
       );
 
       const moves = [
-        { data: XCheckTop.data, arr: '1', axis: 'less' },
-        { data: YCheckBottom.data, arr: '2', axis: 'less' },
-        { data: YCheckTop.data, arr: '3', axis: 'more' },
-        { data: XCheckBottom.data, arr: '4', axis: 'less' }
+        { option: XCheckTop, data: XCheckTop.data, arr: 'one', axis: 'less' },
+        {
+          option: YCheckBottom,
+          data: YCheckBottom.data,
+          arr: 'two',
+          axis: 'less'
+        },
+        { option: YCheckTop, data: YCheckTop.data, arr: 'three', axis: 'more' },
+        {
+          option: XCheckBottom,
+          data: XCheckBottom.data,
+          arr: 'four',
+          axis: 'less'
+        }
       ];
+
       const moveData = moves.map(({ data }) => data);
 
       const dropSwitcher = constants.combineArray(moveData).includes(drop);
-      const clearRoad = moves.find((el) => el.data.includes(drop));
 
-      if (takeDropPawn && takeDropPawn.type === '' && dropSwitcher) {
+      const clearRoad = moves.find(({ data }) => data.includes(drop));
+
+      const attacks = moves
+        .filter(({ option }) => option.jump === true)
+        .map(({ data }) => {
+          if (drop % 8 === 2) {
+            const illegalLeftData = rightWall.filter((el) => data.includes(el));
+
+            return data.filter((el) => !illegalLeftData.includes(el));
+          }
+
+          if (drop % 8 === 7) {
+            const illegalRightData = leftWall.filter((el) => data.includes(el));
+
+            return data.filter((el) => !illegalRightData.includes(el));
+          }
+
+          return data;
+        });
+
+      const connectAttacks = [...new Set(constants.combineArray(attacks))];
+      const dropAttack = connectAttacks.includes(drop);
+
+      const attack = connectAttacks.length ? dropAttack : dropSwitcher;
+
+      if (takeDropPawn && takeDropPawn.type === '' && attack) {
         const update = CreateQueen({ ...props, clearRoad });
         setBoard(update);
+
         const queenSwitcher = SwitchQueen({ ...props, clearRoad });
 
         if (!queenSwitcher) {
@@ -172,8 +208,5 @@ const App = () => {
 export default App;
 
 //TODO
-//fix queen switcher
 //fix queen clear method
 //add game over
-// if user did jump on line that has no enemies switch player : if current line has enemies setup attack
-// only for that one

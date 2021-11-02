@@ -411,10 +411,12 @@ export const XTopPanel = (props) => {
     ? displayOnlyMove.filter(({ id }) => id > onlyCorrectMove)
     : displayOnlyMove;
 
+  const moveDisplay = displayMove.map(({ id }) => id);
+
   const detectAttack =
     detectMove.length && correctMoves.length > 1
       ? { data: correctData, jump: true }
-      : { data: onlyMove ? move : displayMove, jump: false };
+      : { data: onlyMove ? move : moveDisplay, jump: false };
 
   return detectAttack;
 };
