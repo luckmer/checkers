@@ -1,4 +1,4 @@
-import { combineArray } from '../../../constants/helper';
+import helper from '../../../constants/helper';
 
 const BlockFinder = (oneAxis, currentPlayer, boardData, direction) => {
   const blackBlocks = oneAxis
@@ -13,7 +13,9 @@ const BlockFinder = (oneAxis, currentPlayer, boardData, direction) => {
   const higher = blackBlocks.map((el) => [el - direction, el, el + direction]);
   const smaller = blackBlocks.map((el) => [el + direction, el, el - direction]);
 
-  const findEmptySpace = [...new Set(combineArray([...higher, ...smaller]))];
+  const findEmptySpace = [
+    ...new Set(helper.combineArray([...higher, ...smaller]))
+  ];
 
   const data = boardData.filter((el) => findEmptySpace.includes(el.id));
 

@@ -1,27 +1,59 @@
 import BlackQueen from '../../../image/BlackQueen.png';
 import WhiteQueen from '../../../image/whiteQueen.png';
-import { queenType } from '../../../constants/helper';
+import helper from '../../../constants/helper';
+
+const pawnCleaner = (arr, types) =>
+  arr &&
+  arr
+    .filter(
+      ({ type }) => type && helper.queenType(type) !== helper.queenType(types)
+    )
+    .map(({ id }) => id);
 
 const CreateQueen = (props) => {
-  const { boardData, drop, takePawn, clearRoad, currentPlayer } = props;
+  const {
+    boardData,
+    drop,
+    takePawn,
+    clearRoad,
+    currentPlayer,
+    oneYAxis,
+    oneAxis
+  } = props;
 
-  const type = queenType(takePawn.type);
+  const pawnType = takePawn.type;
+  const pawnId = takePawn.id;
+  const type = helper.queenType(pawnType);
+
+  const axisY = pawnCleaner(oneYAxis, pawnType);
+  const axisA = pawnCleaner(oneAxis, pawnType);
+
+  const jumpY =
+    oneYAxis && oneYAxis.map(({ id }) => id).includes(drop) && axisY;
+
+  const jumpA = oneAxis && oneAxis.map(({ id }) => id).includes(drop) && axisA;
 
   const road = clearRoad?.data ? clearRoad?.data : false;
 
   const roadPanel =
     road &&
     road.filter((id) => {
-      return clearRoad.axis === 'more'
-        ? id > drop && id < takePawn.id
-        : id < drop && id > takePawn.id;
+      return clearRoad.arr === 'more'
+        ? id > drop && id < pawnId
+        : id < drop && id > pawnId;
     });
+
+  console.log(
+    road,
+    clearRoad?.data.filter((id) => id > drop && id < pawnId),
+    clearRoad
+  );
 
   const findEnemy =
     roadPanel &&
     boardData
       .filter(({ id }) => roadPanel.includes(id))
-      .filter(({ type }) => type && queenType(type) !== currentPlayer)
+      .filter(({ type }) => type && helper.queenType(type) !== currentPlayer)
       .map(({ id }) => id);
 
   const detectEnemy =
@@ -30,6 +62,9 @@ const CreateQueen = (props) => {
   return boardData.map((el) => {
     const id = Number(el._id);
     const img = type === 'white' ? WhiteQueen : BlackQueen;
+
+    if (!pawnType.includes('Queen')) {
+    }
 
     if (id === Number(drop)) {
       return { ...el, type: `${type}Queen, ${type}`, Img: img };
@@ -41,7 +76,11 @@ const CreateQueen = (props) => {
       }
     }
 
-    if (id === Number(takePawn.id)) {
+    if (
+      id === Number(takePawn.id) ||
+      (jumpY && jumpY?.includes(id)) ||
+      (jumpA && jumpA?.includes(id))
+    ) {
       return { ...el, Img: 'Empty', type: '' };
     }
 

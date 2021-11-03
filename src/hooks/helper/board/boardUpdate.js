@@ -1,4 +1,4 @@
-import { whiteAxis, blackAxis, values } from '../../../constants/helper';
+import helper from '../../../constants/helper';
 
 const BoardUpdate = (props) => {
   const { oneYAxis, oneAxis, takePawn, drop, currentPlayer, boardData } = props;
@@ -6,13 +6,13 @@ const BoardUpdate = (props) => {
   const pawn = takePawn.id;
   const jump = drop;
 
-  const clearX = values(oneYAxis);
-  const clearY = values(oneAxis);
+  const clearX = helper.values(oneYAxis);
+  const clearY = helper.values(oneAxis);
 
-  const blackX = blackAxis(clearX, pawn, jump);
-  const blackY = blackAxis(clearY, pawn, jump);
-  const whiteX = whiteAxis(clearX, pawn, jump);
-  const whiteY = whiteAxis(clearY, pawn, jump);
+  const blackX = helper.blackAxis(clearX, pawn, jump);
+  const blackY = helper.blackAxis(clearY, pawn, jump);
+  const whiteX = helper.whiteAxis(clearX, pawn, jump);
+  const whiteY = helper.whiteAxis(clearY, pawn, jump);
 
   const switchX = currentPlayer === 'white' ? whiteX : blackX;
   const switchY = currentPlayer === 'white' ? whiteY : blackY;

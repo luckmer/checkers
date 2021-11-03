@@ -1,4 +1,4 @@
-import { queenType } from '../../../constants/helper';
+import helper from '../../../constants/helper';
 
 const dataSetter = (props) => {
   const { getNumbers, boardData, jumper, id, currentPlayer } = props;
@@ -30,9 +30,9 @@ const dataSetter = (props) => {
       const optionB = positionBefore[index];
       const optionC = positionFuture[index];
 
-      const typeA = optionA && queenType(optionA.type);
-      const typeB = optionB && queenType(optionB.type);
-      const typeC = optionC && queenType(optionC.type);
+      const typeA = optionA && helper.queenType(optionA.type);
+      const typeB = optionB && helper.queenType(optionB.type);
+      const typeC = optionC && helper.queenType(optionC.type);
 
       const switchOption = (id) =>
         currentPlayer === 'white' ? id - jumper : id + jumper;

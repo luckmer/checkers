@@ -1,12 +1,9 @@
-import {
-  XBottomPanel,
-  XTopPanel,
-  YBottomPanel,
-  YTopPanel
-} from '../../Queen/ControlQueen';
+import player from './constants';
 
 const SwitchQueen = (props) => {
   const { boardData, takePawn, drop, rightWall, leftWall, clearRoad } = props;
+  const { AxisPanel, WallBlockFinder, checker } = player;
+  console.log(!takePawn.type.toLowerCase().includes('queen'));
 
   if (!takePawn.type.toLowerCase().includes('queen')) return;
 
@@ -19,7 +16,6 @@ const SwitchQueen = (props) => {
   );
 
   const noMoves = [...xBottomAxis, ...yBottomAxis, ...xTopAxis, ...yTopAxis];
-
   const movesResult = noMoves.filter((el) => el);
 
   const roadAxis = clearRoad.axis;
@@ -65,31 +61,3 @@ const SwitchQueen = (props) => {
 };
 
 export default SwitchQueen;
-
-const generateMove = (arr, element) =>
-  arr.filter(({ id }) => element.includes(id)).map(({ type }) => type);
-
-const checker = (arr) => arr.includes('');
-
-const WallBlockFinder = (findWallBlocks, boardData) => {
-  const wallBlocks = findWallBlocks.filter((el) => el);
-
-  const getBlocks = boardData
-    .filter(({ type }) => wallBlocks.includes(type))
-    .map(({ id }) => id);
-
-  return getBlocks;
-};
-
-const AxisPanel = (props, switchQueen, boardData) => {
-  const Xbottom = XBottomPanel({ ...props, switchQueen });
-  const Ytop = YTopPanel({ ...props, switchQueen });
-  const Ybottom = YBottomPanel({ ...props, switchQueen });
-  const Xtop = XTopPanel({ ...props, switchQueen });
-
-  const xBottomAxis = generateMove(boardData, Xbottom.data);
-  const yBottomAxis = generateMove(boardData, Ybottom.data);
-  const xTopAxis = generateMove(boardData, Xtop.data);
-  const yTopAxis = generateMove(boardData, Ytop.data);
-  return { xBottomAxis, yBottomAxis, xTopAxis, yTopAxis };
-};

@@ -1,10 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { switchPlayer, SwitchQueen } from './hooks/helper/player/index';
 import { BoardUpdate, CreateQueen } from './hooks/helper/board/index';
 import ChessMapGenerator from './service/BoardGenerator';
-import * as constants from './constants/helper';
-
+import helper from './constants/helper';
 import { ControlRightSite, ControlLeftSite } from './hooks/pawn/index';
 import { CheckersSection, Div } from './css/CheckersSection.Style';
 import { moveIndex } from './hooks/pawn/MovePawn';
@@ -13,7 +12,7 @@ import { direction } from './constants';
 import ControlQueen from './hooks/Queen/ControlQueen';
 
 const App = () => {
-  const [currentPlayer, setCurrentPlayer] = useState('white');
+  const [currentPlayer, setCurrentPlayer] = useState('black');
 
   const { boardData, setBoard } = ChessMapGenerator();
 
@@ -24,18 +23,31 @@ const App = () => {
     e.dataTransfer.setData('id', targetId);
   };
 
+  useEffect(() => {
+    if (!boardData.length) return;
+
+    const arr = boardData;
+
+    const getPawns = arr.filter(({ type }) => type).map(({ type }) => type);
+
+    const createType = getPawns.map((type) => helper.queenType(type));
+    const map = {};
+
+    createType.forEach((el) => (map[el] = (map[el] || 0) + 1));
+  }, [boardData]);
+
   const handleDrop = (e) => {
     e.preventDefault();
     const id = Number(e.dataTransfer.getData('id'));
     const drop = Number(e.target.id);
 
-    const takePawn = constants?.find(boardData, id);
-    const takeDropPawn = constants?.find(boardData, drop);
+    const takePawn = helper?.find(boardData, id);
+    const takeDropPawn = helper?.find(boardData, drop);
 
     const queens = ['whiteQueen', 'blackQueen'];
 
-    const pawnType = constants.pawnType(takePawn?.type);
-    const pawnQueen = constants.queenType(takePawn?.type);
+    const pawnType = helper.pawnType(takePawn?.type);
+    const pawnQueen = helper.queenType(takePawn?.type);
 
     const pawnSwitcher = queens.includes(pawnType) ? pawnQueen : pawnType;
 
@@ -60,7 +72,9 @@ const App = () => {
       id,
       move,
       pawnType,
-      drop
+      drop,
+      whiteWall,
+      blackWall
     };
 
     if (pawnType.toLowerCase().includes('queen')) {
@@ -71,25 +85,27 @@ const App = () => {
       );
 
       const moves = [
-        { option: XCheckTop, data: XCheckTop.data, arr: 'one', axis: 'less' },
+        { arr: 'more', option: XCheckTop, data: XCheckTop.data, axis: 'less' },
         {
+          arr: 'less',
           option: YCheckBottom,
           data: YCheckBottom.data,
-          arr: 'two',
           axis: 'less'
         },
-        { option: YCheckTop, data: YCheckTop.data, arr: 'three', axis: 'more' },
+        { arr: 'more', option: YCheckTop, data: YCheckTop.data, axis: 'more' },
         {
+          arr: 'less',
           option: XCheckBottom,
           data: XCheckBottom.data,
-          arr: 'four',
           axis: 'less'
         }
       ];
 
       const moveData = moves.map(({ data }) => data);
 
-      const dropSwitcher = constants.combineArray(moveData).includes(drop);
+      const dropMove = helper.combineArray(moveData);
+
+      const dropSwitcher = dropMove.includes(drop);
 
       const clearRoad = moves.find(({ data }) => data.includes(drop));
 
@@ -110,16 +126,18 @@ const App = () => {
 
           return data;
         });
+      console.log(moves);
 
-      const connectAttacks = [...new Set(constants.combineArray(attacks))];
+      const connectAttacks = [...new Set(helper.combineArray(attacks))];
+
       const dropAttack = connectAttacks.includes(drop);
 
       const attack = connectAttacks.length ? dropAttack : dropSwitcher;
 
       if (takeDropPawn && takeDropPawn.type === '' && attack) {
         const update = CreateQueen({ ...props, clearRoad });
-        setBoard(update);
 
+        setBoard(update);
         const queenSwitcher = SwitchQueen({ ...props, clearRoad });
 
         if (!queenSwitcher) {
@@ -135,7 +153,7 @@ const App = () => {
         ...props
       });
 
-      const sameMove = constants.checkArrays(test.data, detectAttack.data);
+      const sameMove = helper.checkArrays(test.data, detectAttack.data);
 
       const detectValues = sameMove
         ? detectAttack
@@ -160,17 +178,18 @@ const App = () => {
 
       const dropSwitcher =
         detectValues && detectValues?.data
-          ? detectValues?.data.includes(drop)
-          : detectValues &&
-            [
+          ? detectValues && detectValues?.data.includes(drop)
+          : detectValues && detectValues?.detectAttack
+          ? [
               ...detectValues?.detectAttack.data,
               ...detectValues?.test.data
-            ]?.includes(drop);
+            ]?.includes(drop)
+          : detectValues.includes(drop);
 
       if (takeDropPawn && takeDropPawn.type === '' && dropSwitcher) {
         const update =
           blackWall.includes(drop) || whiteWall.includes(drop)
-            ? CreateQueen(props)
+            ? CreateQueen({ ...props, oneYAxis, oneAxis })
             : BoardUpdate({ ...props, oneYAxis, oneAxis });
 
         setBoard(update);
@@ -206,7 +225,3 @@ const App = () => {
 };
 
 export default App;
-
-//TODO
-//fix queen clear method
-//add game over

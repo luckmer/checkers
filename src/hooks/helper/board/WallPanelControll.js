@@ -1,17 +1,38 @@
-import { wallCreator } from '../../../constants/helper';
+import { GRID_SIZE, BOARD_SIZE } from '../../../constants';
+import helper from '../../../constants/helper';
 
 const WallPanelControl = (boardData) => {
   const wall1Pos = 1;
   const wall2Pos = 0;
 
-  const wall1 = wallCreator(boardData, (item) => item.id % 8 === wall1Pos);
+  const wall1 = helper.wallCreator(
+    boardData,
+    ({ id }) => id % GRID_SIZE === wall1Pos
+  );
 
-  const wall2 = wallCreator(boardData, (item) => item.id % 8 === wall2Pos);
+  const wall2 = helper.wallCreator(
+    boardData,
+    ({ id }) => id % GRID_SIZE === wall2Pos
+  );
 
-  const leftWall = wallCreator(boardData, ({ id }) => id % 8 === 1);
-  const rightWall = wallCreator(boardData, ({ id }) => id % 8 === 0);
-  const blackWall = wallCreator(boardData, ({ id }) => id > 0 && id <= 8);
-  const whiteWall = wallCreator(boardData, ({ id }) => id >= 57 && id <= 64);
+  const leftWall = helper.wallCreator(
+    boardData,
+    ({ id }) => id % GRID_SIZE === 1
+  );
+  const rightWall = helper.wallCreator(
+    boardData,
+    ({ id }) => id % GRID_SIZE === 0
+  );
+
+  const blackWall = helper.wallCreator(
+    boardData,
+    ({ id }) => id > 0 && id <= GRID_SIZE
+  );
+
+  const whiteWall = helper.wallCreator(
+    boardData,
+    ({ id }) => id >= 57 && id <= BOARD_SIZE
+  );
 
   const illegalPosition = [...wall1, ...wall2];
 
