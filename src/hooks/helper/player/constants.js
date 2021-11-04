@@ -32,7 +32,9 @@ class Player {
     const xTopAxis = this.generateMove(boardData, Xtop.data);
     const yTopAxis = this.generateMove(boardData, Ytop.data);
 
-    return { xBottomAxis, yBottomAxis, xTopAxis, yTopAxis };
+    const rest = { Xbottom, Ytop, Ybottom, Xtop };
+
+    return { xBottomAxis, yBottomAxis, xTopAxis, yTopAxis, rest };
   };
 }
 

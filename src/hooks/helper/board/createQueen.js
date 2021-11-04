@@ -43,12 +43,6 @@ const CreateQueen = (props) => {
         : id < drop && id > pawnId;
     });
 
-  console.log(
-    road,
-    clearRoad?.data.filter((id) => id > drop && id < pawnId),
-    clearRoad
-  );
-
   const findEnemy =
     roadPanel &&
     boardData

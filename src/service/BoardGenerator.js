@@ -1,5 +1,5 @@
-import { useState, useEffect, useMemo } from "react";
-import boardMap from "./Board";
+import { useState, useEffect, useMemo } from 'react';
+import boardMap from './Board';
 
 const ChessMapGenerator = () => {
   const [board, setBoard] = useState([]);
@@ -28,7 +28,7 @@ const ChessMapGenerator = () => {
         _id: i,
         background: IdColor,
         Img: boardMap[i - 1][0],
-        type: boardMap[i - 1][1],
+        type: boardMap[i - 1][1]
       };
       box.push(grid);
       if (index === 8) {

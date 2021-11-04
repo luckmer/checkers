@@ -3,19 +3,41 @@ import player from './constants';
 const SwitchQueen = (props) => {
   const { boardData, takePawn, drop, rightWall, leftWall, clearRoad } = props;
   const { AxisPanel, WallBlockFinder, checker } = player;
-  console.log(!takePawn.type.toLowerCase().includes('queen'));
 
   if (!takePawn.type.toLowerCase().includes('queen')) return;
 
   const switchQueen = true;
 
-  const { xBottomAxis, yBottomAxis, xTopAxis, yTopAxis } = AxisPanel(
+  const { xBottomAxis, yBottomAxis, xTopAxis, yTopAxis, rest } = AxisPanel(
     props,
     switchQueen,
     boardData
   );
 
+  const { Xbottom, Ytop, Ybottom, Xtop } = rest;
+  const data = [Xbottom, Ytop, Ybottom, Xtop];
+
+  const byUser = clearRoad.data.filter((el) => el !== drop);
+
+  const test = data
+    .map((el) => {
+      const arr = el.data;
+
+      const data = arr.filter((item) => !byUser.includes(item));
+
+      return { ...el, data };
+    })
+    .filter(({ data }) => data.length);
+
+  const getJumpStatus = test.map(({ jump }) => jump);
+  const testJumpStatus = getJumpStatus.every((el) => el === false);
+
+  if (testJumpStatus) return false;
+
+  // console.log(test, byUser);
+
   const noMoves = [...xBottomAxis, ...yBottomAxis, ...xTopAxis, ...yTopAxis];
+
   const movesResult = noMoves.filter((el) => el);
 
   const roadAxis = clearRoad.axis;
