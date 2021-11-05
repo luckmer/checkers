@@ -48,7 +48,6 @@ function Checkers() {
     setCurrentPlayer('white');
     setGameOver({ winner: '', status: false });
   };
-  console.log(gameOver);
 
   return (
     <Main>
