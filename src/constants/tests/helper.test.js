@@ -180,4 +180,11 @@ describe('helper', () => {
 
     expect(test).toBe(false);
   });
+
+  test('should return normal array', () => {
+    const arr = [[], [], []];
+    const result = helper.combineArray(arr);
+
+    expect(result).toEqual([]);
+  });
 });
