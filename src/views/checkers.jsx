@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react';
-import { CheckersSection, Div } from '../css/CheckersSection.Style';
-import { Link } from 'react-router-dom';
+
+import { Main } from '../css/CheckersSection.Style';
 
 import DragAndDrop from '../hooks/helper/drop/DragAndDrop';
 import ChessMapGenerator from '../service/BoardGenerator';
+import Generator from '../service/Generator';
+import CheckersGame from './CheckersGame';
 import helper from '../constants/helper';
-import styled from 'styled-components';
+import GameOver from './GameOver';
+import NavBar from './NavBar';
 
 function Checkers() {
-  const [gameOver, setGameOver] = useState({
-    winner: '',
-    status: false
-  });
+  const [gameOver, setGameOver] = useState({ winner: '', status: false });
   const [currentPlayer, setCurrentPlayer] = useState('white');
 
   const { boardData, setBoard } = ChessMapGenerator();
@@ -27,6 +27,10 @@ function Checkers() {
     const map = {};
 
     createType.forEach((el) => (map[el] = (map[el] || 0) + 1));
+
+    if (!map['black'] || !map['white']) {
+      setGameOver({ status: true, winner: !map['black'] ? 'white' : 'black' });
+    }
   }, [boardData]);
 
   const { handleDragOver, handleDragStart, handleDrop } = DragAndDrop(
@@ -36,167 +40,25 @@ function Checkers() {
     setCurrentPlayer
   );
 
+  const PROPS = { boardData, handleDragOver, handleDragStart, handleDrop };
+
+  const handleRestartGame = () => {
+    const map = Generator();
+    setBoard(map);
+    setCurrentPlayer('white');
+    setGameOver({ winner: '', status: false });
+  };
+  console.log(gameOver);
+
   return (
     <Main>
-      <Nav>
-        <div>
-          <p>
-            Current Player: <Span>{currentPlayer}</Span>
-          </p>
-        </div>
-        <div>
-          <Link to="*">
-            <Span>Home</Span>
-          </Link>
-        </div>
-      </Nav>
-      <TestA>
-        <CheckersSection>
-          <DisplayNumbers />
-          <TestF>
-            {boardData.map((el, i) => {
-              const check = el.Img === 'Empty';
-              return (
-                <Div
-                  key={i}
-                  type={el.type}
-                  id={el.id}
-                  onDragOver={(e) => handleDragOver(e)}
-                  onDragStart={(e) => (check ? null : handleDragStart(e))}
-                  onDrop={(e) => handleDrop(e)}
-                  Design={el.background}
-                  IMG={el.Img}
-                  draggable={check ? null : true}
-                />
-              );
-            })}
-          </TestF>
-        </CheckersSection>
-        <DisplayLetters />
-      </TestA>
+      <NavBar
+        currentPlayer={currentPlayer}
+        handleRestartGame={handleRestartGame}
+      />
+      {gameOver.status ? GameOver(gameOver.winner) : CheckersGame({ ...PROPS })}
     </Main>
   );
 }
 
 export default Checkers;
-
-const DisplayNumbers = () => {
-  const numbers = new Array(8).fill(0).map((_, i) => i + 1);
-
-  return (
-    <Numbers>
-      {numbers.map((el) => (
-        <Spacer key={el}>
-          <p>{el}</p>
-        </Spacer>
-      ))}
-    </Numbers>
-  );
-};
-
-const DisplayLetters = () => {
-  const letters = new Array(8)
-    .fill(1)
-    .map((_, i) => String.fromCharCode(65 + i));
-
-  return (
-    <Letters>
-      <Spacer />
-      {letters.map((el) => (
-        <Spacer key={el}>
-          <p>{el}</p>
-        </Spacer>
-      ))}
-    </Letters>
-  );
-};
-
-const Span = styled.span`
-  color: #ebebd0;
-`;
-
-const Nav = styled.nav`
-  width: 100%;
-  height: auto;
-  display: flex;
-  justify-content: space-evenly;
-  padding: 10px 20px 10px 20px;
-  color: grey;
-  font-weight: bold;
-  font-family: 'Roboto', sans-serif;
-`;
-
-const Spacer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  @media screen and (min-width: 689px), screen and (min-height: 689px) {
-    height: 75px;
-    width: 75px;
-  }
-
-  @media screen and (max-width: 689px), screen and (max-height: 689px) {
-    height: 50px;
-    width: 50px;
-  }
-
-  @media screen and (max-width: 472px), screen and (max-height: 472px) {
-    height: 30px;
-    width: 30px;
-  }
-`;
-
-const TestF = styled.div`
-  display: flex;
-  flex-flow: row wrap;
-
-  @media screen and (min-width: 689px), screen and (min-height: 689px) {
-    height: 600px;
-    width: 600px;
-    grid-template-columns: repeat(8, 75px);
-    grid-template-rows: repeat(8, 75px);
-  }
-
-  @media screen and (max-width: 689px), screen and (max-height: 689px) {
-    height: 400px;
-    width: 400px;
-    grid-template-columns: repeat(8, 50px);
-    grid-template-rows: repeat(8, 50px);
-  }
-
-  @media screen and (max-width: 472px), screen and (max-height: 472px) {
-    height: 240px;
-    width: 240px;
-    grid-template-columns: repeat(8, 30px);
-    grid-template-rows: repeat(8, 30px);
-  }
-`;
-
-const TestA = styled.section`
-  display: flex;
-  width: 100%;
-  height: 100%;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-`;
-
-const Main = styled.main`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100vh;
-`;
-
-const Numbers = styled.div`
-  color: white;
-`;
-
-export const UpperDiv = styled.div``;
-
-const Letters = styled.div`
-  display: flex;
-  align-items: center;
-  color: white;
-`;
