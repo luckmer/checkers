@@ -38,4 +38,5 @@ const WallPanelControl = (boardData) => {
 
   return { leftWall, rightWall, blackWall, whiteWall, illegalPosition };
 };
+
 export default WallPanelControl;
