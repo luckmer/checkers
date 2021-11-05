@@ -14,6 +14,8 @@ const SwitchQueen = (props) => {
     boardData
   );
 
+  console.log(xBottomAxis, yBottomAxis, xTopAxis, yTopAxis);
+
   const { Xbottom, Ytop, Ybottom, Xtop } = rest;
   const data = [Xbottom, Ytop, Ybottom, Xtop];
 
@@ -33,8 +35,6 @@ const SwitchQueen = (props) => {
   const testJumpStatus = getJumpStatus.every((el) => el === false);
 
   if (testJumpStatus) return false;
-
-  // console.log(test, byUser);
 
   const noMoves = [...xBottomAxis, ...yBottomAxis, ...xTopAxis, ...yTopAxis];
 

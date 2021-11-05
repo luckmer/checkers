@@ -2,7 +2,7 @@ import QueenMovesArray from './QueenMoves';
 import helper from '../../constants/helper';
 
 const QueenAttack = (props) => {
-  const { drop, rightWall, leftWall } = props;
+  const { drop, rightWall, leftWall, whiteWall, blackWall } = props;
 
   const moves = QueenMovesArray(props);
 
@@ -32,7 +32,11 @@ const QueenAttack = (props) => {
       return data;
     });
 
-  const connectAttacks = [...new Set(helper.combineArray(attacks))];
+  const endBlocks = [...new Set([...whiteWall, ...blackWall])];
+
+  const connectAttacks = [...new Set(helper.combineArray(attacks))].filter(
+    (el) => !endBlocks.includes(el)
+  );
 
   const dropAttack = connectAttacks.includes(drop);
 

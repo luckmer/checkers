@@ -1,5 +1,4 @@
 import { direction, upJumper } from '../../../constants';
-// import { xCheckTopWhite, xCheckTopBlack, wallCollision } from './constants';
 import move from './constants';
 
 const Axis = (props) => {
