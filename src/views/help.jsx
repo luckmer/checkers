@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Button } from '../css/CheckersSection.Style';
 import * as _ from '../css/Help.Style';
 
 const Help = () => {
@@ -19,15 +20,15 @@ const Help = () => {
       <_.Nav>
         <_.NavDiv>
           <div>
-            <_.NavP>
-              <Link to="/">HOME</Link>
-            </_.NavP>
+            <Link to="/">
+              <Button>Home</Button>
+            </Link>
           </div>
         </_.NavDiv>
       </_.Nav>
       <_.Description>
         <div>
-          <h1>HOW TO PLAY</h1>
+          <Button>HOW TO PLAY</Button>
         </div>
       </_.Description>
       <_.HelpContainer>
