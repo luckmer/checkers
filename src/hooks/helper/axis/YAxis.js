@@ -7,6 +7,8 @@ import move from './constants';
 const YAxis = (props) => {
   const { boardData, takePawn, rightWall, leftWall, currentPlayer } = props;
 
+  console.log(boardData, takePawn, rightWall, leftWall, currentPlayer);
+
   const PROPS = { boardData, takePawn, downJumper, direction, nextRow };
 
   const YCheckTopWhite = move.yCheckTopWhite({ ...PROPS });

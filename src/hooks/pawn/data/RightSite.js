@@ -1,23 +1,22 @@
-import IdGetter from "../../helper/data/IdGetter";
-import dataSetter from "../../helper/data/setter";
+import IdGetter from '../../helper/data/IdGetter';
+import dataSetter from '../../helper/data/setter';
 
-import { YAxis } from "../../helper/axis";
+import { YAxis } from '../../helper/axis';
 
 const ControlRightSite = (props) => {
   const PROPS = { ...props };
   const { currentPlayer, boardData, move, drop, rightWall, leftWall } = PROPS;
-
   const { switchCleaner, properties, oneYAxis } = YAxis({ ...PROPS });
 
   const data = switchCleaner
     ? properties.filter((el) =>
-        currentPlayer === "white"
+        currentPlayer === 'white'
           ? el.id >= switchCleaner
           : el.id <= switchCleaner
       )
     : properties;
 
-  const onlyEmptyJump = data.filter((el) => el.type === "").map(({ id }) => id);
+  const onlyEmptyJump = data.filter((el) => el.type === '').map(({ id }) => id);
 
   const getNumbers = onlyEmptyJump.filter((el) => el);
 
@@ -30,7 +29,7 @@ const ControlRightSite = (props) => {
   const PossibleAttackId = IdGetter({ ...PROPS, axisXValues });
 
   const PossibleBefore =
-    PossibleAttackId && currentPlayer === "white"
+    PossibleAttackId && currentPlayer === 'white'
       ? PossibleAttackId - 7
       : PossibleAttackId + 7;
 
@@ -46,7 +45,7 @@ const ControlRightSite = (props) => {
 
   const CorrectRightMove = !checkPossibleBlock
     ? false
-    : checkPossibleBlock.type === "";
+    : checkPossibleBlock.type === '';
 
   const test = CorrectRightMove
     ? { data: clearBlocker, jump: true }

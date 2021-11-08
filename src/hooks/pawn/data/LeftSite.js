@@ -1,7 +1,7 @@
-import { Axis } from "../../helper/axis";
-import BlockFinder from "../../helper/board/blockFinder";
-import dataSetter from "../../helper/data/setter";
-import IdGetter from "../../helper/data/IdGetter";
+import { Axis } from '../../helper/axis';
+import BlockFinder from '../../helper/board/blockFinder';
+import dataSetter from '../../helper/data/setter';
+import IdGetter from '../../helper/data/IdGetter';
 
 const ControlLeftSite = (props) => {
   const PROPS = { ...props };
@@ -11,7 +11,7 @@ const ControlLeftSite = (props) => {
 
   const data = BlockFinder(oneAxis, currentPlayer, boardData, 9);
 
-  const onlyEmptyJump = data.filter((el) => el.type === "").map(({ id }) => id);
+  const onlyEmptyJump = data.filter((el) => el.type === '').map(({ id }) => id);
 
   const getNumbers = onlyEmptyJump.filter((el) => el);
 
@@ -24,7 +24,7 @@ const ControlLeftSite = (props) => {
   const PossibleAttackId = IdGetter({ ...PROPS, axisXValues });
 
   const PossibleBefore =
-    PossibleAttackId && currentPlayer === "white"
+    PossibleAttackId && currentPlayer === 'white'
       ? PossibleAttackId - 9
       : PossibleAttackId + 9;
 
@@ -38,7 +38,7 @@ const ControlLeftSite = (props) => {
 
   const correctLeftMove = !checkPossibleBlock
     ? false
-    : checkPossibleBlock.type === "";
+    : checkPossibleBlock.type === '';
 
   const detectAttack =
     correctLeftMove && !IllegalAttack
