@@ -14,8 +14,6 @@ const SwitchQueen = (props) => {
     boardData
   );
 
-  console.log(xBottomAxis, yBottomAxis, xTopAxis, yTopAxis);
-
   const { Xbottom, Ytop, Ybottom, Xtop } = rest;
   const data = [Xbottom, Ytop, Ybottom, Xtop];
 
