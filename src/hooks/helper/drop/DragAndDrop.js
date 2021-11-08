@@ -6,7 +6,15 @@ import helper from '../../../constants/helper';
 import Queen from '../../Queen/Queen';
 import Pawn from '../../pawn/Pawn';
 
-const DragAndDrop = (boardData, currentPlayer, setBoard, setCurrentPlayer) => {
+const DragAndDrop = (props) => {
+  const {
+    boardData,
+    currentPlayer,
+    setBoard,
+    setCurrentPlayer,
+    setDraggedPawn
+  } = props;
+
   const handleDragOver = (e) => e.preventDefault();
 
   const handleDragStart = (e) => {
@@ -18,6 +26,7 @@ const DragAndDrop = (boardData, currentPlayer, setBoard, setCurrentPlayer) => {
     e.preventDefault();
 
     const id = Number(e.dataTransfer.getData('id'));
+    console.log(id);
     const drop = Number(e.target.id);
 
     const takePawn = helper?.find(boardData, id);
@@ -44,7 +53,16 @@ const DragAndDrop = (boardData, currentPlayer, setBoard, setCurrentPlayer) => {
     const wallProps = { leftWall, rightWall, whiteWall, blackWall };
 
     const playerProps = { takePawn, direction, currentPlayer, pawnType };
-    const props = { ...wallProps, ...playerProps, boardData, id, move, drop };
+
+    const dropProps = { setDraggedPawn, drop };
+    const props = {
+      ...playerProps,
+      ...dropProps,
+      ...wallProps,
+      boardData,
+      move,
+      id
+    };
 
     switch (pawnType) {
       case 'whiteQueen':
