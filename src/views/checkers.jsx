@@ -33,12 +33,10 @@ function Checkers() {
     }
   }, [boardData]);
 
-  const { handleDragOver, handleDragStart, handleDrop } = DragAndDrop(
-    boardData,
-    currentPlayer,
-    setBoard,
-    setCurrentPlayer
-  );
+  const dragProps = { boardData, currentPlayer, setBoard, setCurrentPlayer };
+  const { handleDragOver, handleDragStart, handleDrop } = DragAndDrop({
+    ...dragProps
+  });
 
   const PROPS = { boardData, handleDragOver, handleDragStart, handleDrop };
 
